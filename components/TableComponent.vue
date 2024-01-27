@@ -24,7 +24,11 @@
       <template v-slot:item.pushed_at="{ item }">
         {{ new Date(item.pushed_at).toLocaleDateString() }}
       </template>      
-      <!-- Resto de las columnas -->
+      <template v-slot:item.stargazers_count="{ item }">
+        <div style="display: flex; align-items: center;">
+          {{ formatStars(item.stargazers_count) }} <v-icon small class="mr-2">mdi-star</v-icon>
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -36,6 +40,14 @@ export default defineComponent({
   components: {
     LabelTopic
   },
+  methods: {
+    formatStars(count) {
+      if (count >= 1000) {
+        return (count / 1000).toFixed(1) + 'K';
+      }
+      return count;
+    }
+  },  
   props: {
     reposData: {
       type: Array,
