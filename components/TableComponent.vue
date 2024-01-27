@@ -6,7 +6,7 @@
         <v-text-field v-model="search" label="Search" class="mb-2" append-icon="mdi-magnify" />
       </v-col>
     </v-row>
-    <v-data-table  density="compact" :headers="headers" :items="reposData" :search="search" class="elevation-1">
+    <v-data-table  density="compact" :headers="headers" :items="reposData" :search="search" class="elevation-1"  :items-per-page="50">
       <template v-slot:item.full_name="{ item }">
         <a :href="'https://github.com/' + item.full_name" target="_blank">{{ item.full_name }}</a>
       </template>
