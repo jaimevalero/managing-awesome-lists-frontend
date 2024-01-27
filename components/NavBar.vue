@@ -1,7 +1,6 @@
 <template>
-  <v-app-bar         color="primary"
-        density="compact" app>
-    <v-toolbar-title class="mr-auto">
+  <v-app-bar class="app-bar-color" color="info-darken-1" density="compact" >
+    <v-toolbar-title  class="mr-auto">
       <div class="nav-brand">Awesome List Viewer</div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -31,5 +30,9 @@ export default defineComponent({
 .nav-brand {
   font-weight: bold;
   padding: 2px 0;
+}
+.app-bar-color {
+  background-color: 'info-darken-1' !important; /* staticPrimaryColor de tu archivo themes.ts */
+  color: 'info-darken-1' !important;
 }
 </style>

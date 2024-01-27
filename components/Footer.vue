@@ -1,5 +1,5 @@
 <template>
-    <v-footer color="primary" class="white--text">
+    <v-footer color="info-darken-1" class="white--text">
       <v-row justify="center">
         <v-col cols="12" sm="6" class="text-center">
           Made with love <v-icon color="red">mdi-heart</v-icon>
