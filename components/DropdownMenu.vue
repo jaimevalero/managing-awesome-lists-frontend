@@ -32,7 +32,7 @@ export default defineComponent({
     }
 
     const displayItem = (item) => {
-      return item.split('/').pop().replace('awesome-', '')
+      return item.split('/').pop().replace('awesome', '')
     }
 
     return { selected, items, navigateTo, displayItem }
