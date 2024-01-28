@@ -1,4 +1,3 @@
-//import { defineNuxtConfig } from 'nuxt3'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
