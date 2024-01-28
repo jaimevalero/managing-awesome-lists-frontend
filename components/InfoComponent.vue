@@ -4,15 +4,18 @@
       <h1 v-if="categoryType === 'topic'">Topic Category: {{ categoryName }}</h1>
       <h1 v-else-if="categoryType === 'awesome'">Awesome List: <a :href="'https://github.com/' + categoryName" target="_blank">{{ categoryName }}</a></h1>
     </v-card-title>
+    <v-card-item v-if="description">
+      {{ description }}
+    </v-card-item> 
+    <v-card-item v-if="categoryType === 'topic'">
+      Page auto-generated with the repos containing the topic: {{ categoryName }}.
+    </v-card-item>    
     <v-card-text>
-      <p v-if="categoryType === 'topic'">
-        Page auto-generated with the topics of the category {{ categoryName }}. <br>
-      </p>
-      <p v-else-if="categoryType === 'awesome'">
-        Repos from the awesome list: <br>
-      </p>
-      Related topics:
+      
       <div class="topics-container">
+        <div class="topics-header">
+          Related topics:
+        </div>
         <LabelTopic
           v-for="topic in Object.keys(frequentTopics).slice(0, 5)"
           :key="topic"
@@ -43,7 +46,12 @@ export default defineComponent({
     categoryType: {
       type: String,
       required: true
+    },
+    description: {
+      type: String,
+      default: undefined
     }
+
   }
 })
 </script>
@@ -51,8 +59,12 @@ export default defineComponent({
 <style scoped>
 .topics-container {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center; /* Centra verticalmente los elementos hijos */
   gap: 10px;
   margin-bottom: 5px;
 }
+.topics-header {
+  margin-right: 10px; /* Añade un margen a la derecha del texto */
+}
+
 </style>

@@ -4,7 +4,9 @@
       <InfoComponent 
         :categoryName="jsonData.category_name" 
         :frequentTopics="jsonData.frecuent_topics" 
-        :categoryType="jsonData.category_type" />
+        :categoryType="jsonData.category_type"
+        :description="getDescription(jsonData)"
+         />
 
       <TableComponent :reposData="jsonData.repos_data" />
     </div>
@@ -12,6 +14,7 @@
 </template>
 
 <script lang="ts">
+
 import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
@@ -44,7 +47,9 @@ export default defineComponent({
     fetchData()
 
     return {
-      jsonData
+      jsonData,
+      getDescription: (data) => data.repo_meta_data?.description
+
     }
   }
 })
