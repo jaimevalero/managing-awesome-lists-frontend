@@ -1,8 +1,12 @@
 {
-  "routes": [
+  "version": 2,
+  "builds": [
     {
-      "src": "/a-(.*)",
-      "dest": "/index.html"
+      "src": "nuxt.config.js",
+      "use": "@nuxtjs/vercel-builder",
+      "config": {
+        "serverFiles": ["package.json"]
+      }
     }
   ]
 }
