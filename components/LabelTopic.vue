@@ -1,11 +1,9 @@
 <template>
-  <div>
     <v-chip  :to="`/a-topic/${topic}`" 
-     variant="elevated" 
-     class="github-topic" 
-     color='perfect-scrollbar-thumb'>{{ topic }}
-  </v-chip>
-  </div>
+      variant="elevated" 
+      class="github-topic" 
+      color='perfect-scrollbar-thumb'>{{ topic }}
+    </v-chip>
 </template>
 
 <script lang="ts">
@@ -24,6 +22,7 @@ export default defineComponent({
 
 <style scoped>
 .github-topic {
-  margin: 0.3em 0; /* Agrega un margen vertical de 0.5em */
+  transition: background-color 0.2s ease-in-out;
+
 }
 </style>

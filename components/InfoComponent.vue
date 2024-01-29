@@ -1,8 +1,10 @@
 <template>
   <v-card class="mb-5">
     <v-card-title>
-      <h1 v-if="categoryType === 'topic'">Topic Category: {{ categoryName }}</h1>
-      <h1 v-else-if="categoryType === 'awesome'">Awesome List: <a :href="'https://github.com/' + categoryName" target="_blank">{{ categoryName }}</a></h1>
+      <h1 v-if="categoryType === 'topic'">
+        Topic Category: <LabelTopic :topic="categoryName" color="Primary" />
+      </h1>     
+   <h1 v-else-if="categoryType === 'awesome'">Awesome List: <a :href="'https://github.com/' + categoryName" target="_blank">{{ categoryName }}</a></h1>
     </v-card-title>
     <v-card-item v-if="description">
       {{ description }}
@@ -16,11 +18,13 @@
         <div class="topics-header">
           Related topics:
         </div>
+        <v-chip-group>
         <LabelTopic
-          v-for="topic in Object.keys(frequentTopics).slice(0, 5)"
+          v-for="topic in Object.keys(filteredTopics).slice(0, 5)"
           :key="topic"
           :topic="topic"
         />
+        </v-chip-group>
       </div>
     </v-card-text>
   </v-card>
@@ -29,6 +33,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import LabelTopic from './LabelTopic.vue'
+
+
 
 export default defineComponent({
   components: {
@@ -51,7 +57,13 @@ export default defineComponent({
       type: String,
       default: undefined
     }
-
+  },
+  computed: {
+    filteredTopics() {
+      const topics = { ...this.frequentTopics };
+      delete topics[this.categoryName];
+      return topics;
+    }
   }
 })
 </script>

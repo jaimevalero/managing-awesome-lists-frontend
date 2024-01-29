@@ -14,15 +14,16 @@
         <div class="description">{{ item.description }}</div>
       </template>
       <template v-slot:item.topics="{ item }">
-        <div class="topic-container">
-          <LabelTopic v-for="(topic, index) in item.topics" :key="index" :topic="topic" />
-        </div>
+        <v-chip-group class="topic-container" column selected-class="text-secondary" >
+          <LabelTopic v-for="(topic, index) in item.topics" :key="index" :topic="topic"  />
+        </v-chip-group>
       </template>
+
       <template v-slot:item.created_at="{ item }">
-        {{ new Date(item.created_at).toLocaleDateString() }}
+        {{ new Date(item.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric' }) }}
       </template>
       <template v-slot:item.pushed_at="{ item }">
-        {{ new Date(item.pushed_at).toLocaleDateString() }}
+        {{ new Date(item.pushed_at).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric' }) }}
       </template>      
       <template v-slot:item.stargazers_count="{ item }">
         <div style="display: flex; align-items: center;">
