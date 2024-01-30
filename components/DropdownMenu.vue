@@ -21,8 +21,7 @@ export default defineComponent({
     onMounted(async () => {
       const response = await axios.get('/lists.json')
       items.value = response.data.map((item) => {
-        const split = item.split('/')
-        return split[split.length - 2] + '/' + split[split.length - 1]
+        return item.category_name
       })
     })
 
