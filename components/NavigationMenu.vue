@@ -39,10 +39,10 @@ export default defineComponent({
 })
 </script>
 
+
+
 <style scoped>
 .custom-drawer {
-  background-color: var(--v-primary-lighten2) !important;
-
+  background-color: #FFFFFF !important; /* Reemplaza #FFFFFF con el color que desees */
 }
 </style>
-
