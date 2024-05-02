@@ -261,7 +261,7 @@
     },
     {
         "category_name": "vinta/awesome-python",
-        "description": "A curated list of awesome Python frameworks, libraries, software and resources",
+        "description": "An opinionated list of awesome Python frameworks, libraries, software and resources.",
         "display": "python"
     },
     {
@@ -306,6 +306,11 @@
     },
     {
         "category_name": "awesome-selfhosted/awesome-selfhosted",
+        "description": "A list of Free Software network services and web applications which can be hosted on your own servers",
+        "display": "selfhosted"
+    },
+    {
+        "category_name": "Kickball/awesome-selfhosted",
         "description": "A list of Free Software network services and web applications which can be hosted on your own servers",
         "display": "selfhosted"
     },
