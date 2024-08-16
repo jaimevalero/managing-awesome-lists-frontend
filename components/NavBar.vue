@@ -1,9 +1,11 @@
 <template>
   <v-app-bar class="app-bar-color" color="info-darken-1" density="compact" >
     <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
-    <v-toolbar-title  class="mr-auto">
-      <div class="nav-brand">Awesome List Viewer</div>
+    
+    <v-toolbar-title class="mr-auto">
+      <a href="/" class="nav-brand">Awesome List Viewer</a>
     </v-toolbar-title>
+
     <v-spacer></v-spacer>
     <v-row no-gutters>
     </v-row>
