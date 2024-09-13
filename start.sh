@@ -3,3 +3,4 @@
 
 npm run build
 nuxt build
+npm run dev
