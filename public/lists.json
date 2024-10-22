@@ -80,6 +80,11 @@
         "display": "d3"
     },
     {
+        "category_name": "academic/awesome-datascience",
+        "description": ":memo: An awesome Data Science repository to learn and apply for real world problems.",
+        "display": "datascience"
+    },
+    {
         "category_name": "javierluraschi/awesome-dataviz",
         "description": ":chart_with_upwards_trend:  A curated list of awesome data visualization libraries and resources.",
         "display": "dataviz"
