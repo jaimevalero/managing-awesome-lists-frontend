@@ -56,7 +56,7 @@
     },
     {
         "category_name": "ligurio/awesome-ci",
-        "description": "List of Continuous Integration services",
+        "description": "The list of continuous integration services and tools",
         "display": "ci"
     },
     {
@@ -136,7 +136,7 @@
     },
     {
         "category_name": "cugu/awesome-forensics",
-        "description": "A curated list of awesome forensic analysis tools and resources",
+        "description": "\u2b50\ufe0f A curated list of awesome forensic analysis tools and resources",
         "display": "forensics"
     },
     {
