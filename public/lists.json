@@ -20,11 +20,6 @@
         "display": "apache-airflow"
     },
     {
-        "category_name": "sindresorhus/awesome",
-        "description": "\ud83d\ude0e Awesome lists about all kinds of interesting topics",
-        "display": "awesome"
-    },
-    {
         "category_name": "Awesome-Windows/Awesome",
         "description": ":computer: \ud83c\udf89 An awesome & curated list of best applications and tools for Windows.",
         "display": "awesome"
@@ -88,11 +83,6 @@
         "category_name": "javierluraschi/awesome-dataviz",
         "description": ":chart_with_upwards_trend:  A curated list of awesome data visualization libraries and resources.",
         "display": "dataviz"
-    },
-    {
-        "category_name": "numetriclabz/awesome-db",
-        "description": "A curated list of amazingly awesome database libraries, resources and shiny things by https://www.numetriclabz.com/",
-        "display": "db"
     },
     {
         "category_name": "heynickc/awesome-ddd",
@@ -278,11 +268,6 @@
         "category_name": "enaqx/awesome-react",
         "description": "A collection of awesome things regarding React ecosystem",
         "display": "react"
-    },
-    {
-        "category_name": "matiassingers/awesome-readme",
-        "description": "A curated list of awesome READMEs",
-        "display": "readme"
     },
     {
         "category_name": "lukasz-madon/awesome-remote-job",
