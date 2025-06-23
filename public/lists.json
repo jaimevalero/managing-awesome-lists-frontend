@@ -285,6 +285,11 @@
         "display": "react"
     },
     {
+        "category_name": "matiassingers/awesome-readme",
+        "description": "A curated list of awesome READMEs",
+        "display": "readme"
+    },
+    {
         "category_name": "lukasz-madon/awesome-remote-job",
         "description": "A curated list of awesome remote jobs and resources. Inspired by https://github.com/vinta/awesome-python",
         "display": "remote-job"
