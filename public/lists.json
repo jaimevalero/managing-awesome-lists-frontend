@@ -210,11 +210,6 @@
         "display": "llm"
     },
     {
-        "category_name": "jaywcjlove/awesome-mac",
-        "description": "\uf8ff Now we have become very big, Different from the original idea. Collect premium software in various categories.",
-        "display": "mac"
-    },
-    {
         "category_name": "josephmisiti/awesome-machine-learning",
         "description": "A curated list of awesome Machine Learning frameworks, libraries and software.",
         "display": "machine-learning"
