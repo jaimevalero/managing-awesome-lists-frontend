@@ -190,11 +190,6 @@
         "display": "javascript"
     },
     {
-        "category_name": "AllThingsSmitty/jquery-tips-everyone-should-know",
-        "description": "A collection of tips to help up your jQuery game \ud83c\udfae",
-        "display": "jquery-tips-everyone-should-know"
-    },
-    {
         "category_name": "KotlinBy/awesome-kotlin",
         "description": "A curated list of awesome Kotlin related stuff Inspired by awesome-java. ",
         "display": "kotlin"
