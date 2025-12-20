@@ -19,9 +19,17 @@
         </v-chip-group>
       </template>
 
+
       <template v-slot:item.created_at="{ item }">
-        {{ new Date(item.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric' }) }}
-      </template>
+        <v-chip 
+          :color="getDateColor(item.created_at)" 
+          size="small"
+          variant="flat"
+        >
+          {{ formatDate(item.created_at) }}
+        </v-chip>  
+      </template>        
+  
       <template v-slot:item.pushed_at="{ item }">
         <v-chip 
           :color="getDateColor(item.pushed_at)" 
