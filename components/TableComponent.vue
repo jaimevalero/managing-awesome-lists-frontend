@@ -23,8 +23,14 @@
         {{ new Date(item.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric' }) }}
       </template>
       <template v-slot:item.pushed_at="{ item }">
-        {{ new Date(item.pushed_at).toLocaleDateString(undefined, { year: 'numeric', month: 'numeric' }) }}
-      </template>      
+        <v-chip 
+          :color="getDateColor(item.pushed_at)" 
+          size="small"
+          variant="flat"
+        >
+          {{ formatDate(item.pushed_at) }}
+        </v-chip>
+      </template>        
       <template v-slot:item.stargazers_count="{ item }">
         <div style="display: flex; align-items: center;">
           {{ formatStars(item.stargazers_count) }} <v-icon small class="mr-2">mdi-star</v-icon>
@@ -47,6 +53,21 @@ export default defineComponent({
         return (count / 1000).toFixed(1) + 'K';
       }
       return count;
+    },
+       getDateColor(dateStr: string) {
+      const days = Math.floor(
+        (new Date().getTime() - new Date(dateStr).getTime()) 
+        / (1000 * 60 * 60 * 24)
+      )
+      if (days <= 30) return 'success'      // Verde: actualizado hace <30 días
+      if (days <= 180) return 'warning'     // Amarillo: <6 meses
+      return 'grey-lighten-1'               // Gris: >6 meses
+    },
+    formatDate(dateStr: string) {
+      return new Date(dateStr).toLocaleDateString(undefined, { 
+        year: 'numeric', 
+        month: 'numeric' 
+      })
     }
   },  
   props: {
