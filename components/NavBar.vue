@@ -4,7 +4,12 @@
     density="compact"
     elevation="2"
   >
-    <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon 
+      @click="$emit('toggle-drawer')"
+      title="Toggle sidebar"
+    >
+      <v-icon>mdi-menu</v-icon>
+    </v-app-bar-nav-icon>
     
     <v-toolbar-title class="mr-auto">
       <a href="/" class="nav-brand">Awesome List Viewer</a>
@@ -19,6 +24,7 @@ import { defineComponent } from 'vue'
 import DropdownMenu from '../components/DropdownMenu.vue'
 
 export default defineComponent({
+  emits: ['toggle-drawer'],
   components: {
     DropdownMenu
   }

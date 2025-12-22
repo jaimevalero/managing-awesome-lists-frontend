@@ -1,21 +1,12 @@
 <template>
   <v-navigation-drawer 
-    permanent 
+    :model-value="modelValue"
+    @update:model-value="$emit('update:model-value', $event)"
     class="custom-drawer"
     :width="256"
   >
-    <!-- Header with search -->
-    <v-list-item class="drawer-header">
-      <v-list-item-title class="text-h6 font-weight-bold drawer-title">
-        <v-icon class="mr-2">mdi-star-circle</v-icon>
-        Awesome Lists
-      </v-list-item-title>
-    </v-list-item>
-
-    <v-divider></v-divider>
-
-    <!-- Search bar -->
-    <div class="pa-3">
+    <!-- Search bar at the top -->
+    <div class="pa-3 pt-4">
       <v-text-field
         v-model="searchQuery"
         placeholder="Search lists..."
@@ -71,6 +62,19 @@
       <v-icon size="48" color="grey-lighten-2">mdi-file-search-outline</v-icon>
       <p class="text-caption text-grey mt-2">No lists found</p>
     </div>
+
+    <!-- Collapse button at bottom -->
+    <div class="collapse-button-container">
+      <v-btn
+        block
+        variant="text"
+        class="collapse-btn-bottom"
+        @click="$emit('update:model-value', false)"
+        prepend-icon="mdi-chevron-left"
+      >
+        Collapse Sidebar
+      </v-btn>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -80,7 +84,14 @@ import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 
 export default defineComponent({
-  setup() {
+  props: {
+    modelValue: {
+      type: Boolean,
+      default: true
+    }
+  },
+  emits: ['update:model-value'],
+  setup(props, { emit }) {
     const items = ref([])
     const router = useRouter()
     const route = useRoute()
@@ -174,19 +185,42 @@ export default defineComponent({
 .custom-drawer {
   background-color: #fafafa !important;
   border-right: 1px solid #e0e0e0;
-  /* Ensure drawer doesn't interfere with footer */
-  height: calc(100vh - 48px) !important; /* Subtract app-bar height */
-  top: 48px !important; /* Height of compact app-bar */
+  /* Full height from navbar to bottom */
+  height: calc(100vh - 48px) !important;
+  max-height: calc(100vh - 48px) !important;
+  top: 48px !important;
+  bottom: auto !important;
+  z-index: 1;
+  /* Smooth transition for open/close */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
 }
 
-.drawer-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 16px;
+/* Navigation list takes available space */
+:deep(.v-list) {
+  flex: 1;
+  overflow-y: auto;
 }
 
-.drawer-title {
-  color: white !important;
+/* Collapse button at bottom */
+.collapse-button-container {
+  padding: 8px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.collapse-btn-bottom {
+  color: #666;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: none;
+  transition: all 0.2s ease;
+}
+
+.collapse-btn-bottom:hover {
+  background-color: rgba(102, 126, 234, 0.08);
+  color: #667eea;
 }
 
 .list-item-custom {
