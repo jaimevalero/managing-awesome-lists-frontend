@@ -52,11 +52,28 @@ const myCustomLightTheme: ThemeDefinition = {
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
     theme: {
-      defaultTheme: 'myCustomLightTheme',
+      defaultTheme: 'light',
       themes: {
-        myCustomLightTheme,
+        light: {
+          colors: {
+            primary: '#667eea', // Purple gradient start
+            secondary: '#764ba2', // Purple gradient end
+            accent: '#82B1FF',
+            error: '#FF5252',
+            info: '#2196F3',
+            success: '#4CAF50',
+            warning: '#FFC107',
+          },
+        },
+        dark: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          },
+        },
       },
     },
   })
+
   app.vueApp.use(vuetify)
 })

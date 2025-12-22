@@ -7,7 +7,6 @@
     </v-main>
     <Footer />
   </v-app>
-
 </template>
 
 <script lang="ts">
@@ -29,3 +28,17 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped>
+/* Ensure main content has proper padding to accommodate fixed drawer */
+:deep(.v-main) {
+  padding-left: 256px !important; /* Same width as drawer */
+}
+
+/* On mobile, remove the padding */
+@media (max-width: 1280px) {
+  :deep(.v-main) {
+    padding-left: 0 !important;
+  }
+}
+</style>

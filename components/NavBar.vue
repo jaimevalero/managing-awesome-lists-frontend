@@ -1,5 +1,9 @@
 <template>
-  <v-app-bar class="app-bar-color" color="info-darken-1" density="compact" >
+  <v-app-bar 
+    color="primary" 
+    density="compact"
+    elevation="2"
+  >
     <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
     
     <v-toolbar-title class="mr-auto">
@@ -7,8 +11,6 @@
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
-    <v-row no-gutters>
-    </v-row>
   </v-app-bar>
 </template>
 
@@ -27,9 +29,12 @@ export default defineComponent({
 .nav-brand {
   font-weight: bold;
   padding: 2px 0;
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
-.app-bar-color {
-  background-color: 'info-darken-1' !important; /* staticPrimaryColor de tu archivo themes.ts */
-  color: 'info-darken-1' !important;
+
+.nav-brand:hover {
+  opacity: 0.8;
 }
 </style>

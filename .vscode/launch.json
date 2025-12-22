@@ -1,12 +1,46 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "type": "chrome",
-        "request": "launch",
-        "name": "Launch Chrome against localhost",
-        "url": "http://localhost:3000/a-awesome/akullpp@awesome-java",
-        "webRoot": "${workspaceFolder}"
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Nuxt Dev (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "npm: dev",
+      "postDebugTask": "kill-port-3000"
+    },
+    {
+      "name": "Live Preview: Nuxt",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/.vscode/test",
+        "ms-vscode.live-server"
+      ],
+      "preLaunchTask": "npm: dev"
+    }
+  ],
+  "tasks": [
+    {
+      "label": "npm: dev",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "kill-port-3000",
+      "type": "shell",
+      "command": "npx kill-port 3000",
+      "presentation": {
+        "reveal": "silent"
       }
-    ]
-  }
+    }
+  ]
+}
