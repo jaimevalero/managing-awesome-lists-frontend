@@ -37,11 +37,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Main content padding for drawer - with smooth transition */
+/* Main content padding with transition */
 :deep(.v-main) {
   padding-left: 256px !important;
   padding-bottom: 0 !important;
+  padding-top: 48px !important; /* Account for navbar */
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - 48px);
 }
 
 /* When drawer is collapsed */
@@ -49,9 +51,14 @@ export default defineComponent({
   padding-left: 0 !important;
 }
 
-/* Remove bottom padding from main content container */
+/* Remove default padding */
 :deep(.v-main__wrap) {
   padding-bottom: 0 !important;
+}
+
+/* Ensure v-app has proper stacking context */
+:deep(.v-application) {
+  overflow: hidden;
 }
 
 /* On mobile, remove the left padding */

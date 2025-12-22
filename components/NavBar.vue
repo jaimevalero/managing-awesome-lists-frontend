@@ -2,7 +2,9 @@
   <v-app-bar 
     color="primary" 
     density="compact"
-    elevation="2"
+    elevation="4"
+    class="app-navbar"
+    fixed
   >
     <v-app-bar-nav-icon 
       @click="$emit('toggle-drawer')"
@@ -32,6 +34,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.app-navbar {
+  /* Ensure navbar is ALWAYS on top */
+  z-index: 1100 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  
+  /* Ensure navbar covers everything below */
+  isolation: isolate;
+}
+
 .nav-brand {
   font-weight: bold;
   padding: 2px 0;

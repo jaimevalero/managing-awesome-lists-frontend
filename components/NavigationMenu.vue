@@ -4,76 +4,84 @@
     @update:model-value="$emit('update:model-value', $event)"
     class="custom-drawer"
     :width="256"
+    :permanent="false"
+    :temporary="false"
+    :rail="false"
   >
-    <!-- Search bar at the top -->
-    <div class="pa-3 pt-4">
-      <v-text-field
-        v-model="searchQuery"
-        placeholder="Search lists..."
-        prepend-inner-icon="mdi-magnify"
-        variant="outlined"
-        density="compact"
-        hide-details
-        clearable
-      ></v-text-field>
-    </div>
+    <!-- Inner container to control all content -->
+    <div class="drawer-inner-container">
+      <!-- Search bar at the top -->
+      <div class="pa-3 pt-4">
+        <v-text-field
+          v-model="searchQuery"
+          placeholder="Search lists..."
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          density="compact"
+          hide-details
+          clearable
+        ></v-text-field>
+      </div>
 
-    <!-- Lists count badge -->
-    <div class="px-3 pb-2">
-      <v-chip size="small" color="primary" variant="tonal">
-        {{ filteredItems.length }} lists available
-      </v-chip>
-    </div>
+      <!-- Lists count badge -->
+      <div class="px-3 pb-2">
+        <v-chip size="small" color="primary" variant="tonal">
+          {{ filteredItems.length }} lists available
+        </v-chip>
+      </div>
 
-    <v-divider></v-divider>
+      <v-divider></v-divider>
 
-    <!-- Navigation items -->
-    <v-list nav class="py-0">
-      <v-tooltip
-        v-for="(item, index) in filteredItems"
-        :key="index"
-        location="right"
-        max-width="400"
-      >
-        <template v-slot:activator="{ props: tooltipProps }">
-          <v-list-item
-            @click="navigateTo(item)"
-            class="list-item-custom"
-            :active="isActive(item)"
-            v-bind="tooltipProps"
+      <!-- Navigation items with scroll container -->
+      <div class="lists-scroll-container">
+        <v-list nav class="py-0">
+          <v-tooltip
+            v-for="(item, index) in filteredItems"
+            :key="index"
+            location="right"
+            max-width="400"
           >
-            <template v-slot:prepend>
-              <v-icon size="small" :color="isActive(item) ? 'primary' : 'grey'">
-                {{ getCategoryIcon(item.category_name) }}
-              </v-icon>
+            <template v-slot:activator="{ props: tooltipProps }">
+              <v-list-item
+                @click="navigateTo(item)"
+                class="list-item-custom"
+                :active="isActive(item)"
+                v-bind="tooltipProps"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="small" :color="isActive(item) ? 'primary' : 'grey'">
+                    {{ getCategoryIcon(item.category_name) }}
+                  </v-icon>
+                </template>
+
+                <v-list-item-title class="list-item-title">
+                  {{ formatDisplayName(item.display) }}
+                </v-list-item-title>
+              </v-list-item>
             </template>
+            <span>{{ item.description || item.display || 'Awesome list' }}</span>
+          </v-tooltip>
+        </v-list>
 
-            <v-list-item-title class="list-item-title">
-              {{ formatDisplayName(item.display) }}
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <span>{{ item.description || item.display || 'Awesome list' }}</span>
-      </v-tooltip>
-    </v-list>
+        <!-- Empty state -->
+        <div v-if="filteredItems.length === 0" class="pa-4 text-center">
+          <v-icon size="48" color="grey-lighten-2">mdi-file-search-outline</v-icon>
+          <p class="text-caption text-grey mt-2">No lists found</p>
+        </div>
+      </div>
 
-    <!-- Empty state -->
-    <div v-if="filteredItems.length === 0" class="pa-4 text-center">
-      <v-icon size="48" color="grey-lighten-2">mdi-file-search-outline</v-icon>
-      <p class="text-caption text-grey mt-2">No lists found</p>
-    </div>
-
-    <!-- Collapse button at bottom -->
-    <div class="collapse-button-container">
-      <v-btn
-        block
-        variant="text"
-        class="collapse-btn-bottom"
-        @click="$emit('update:model-value', false)"
-        prepend-icon="mdi-chevron-left"
-      >
-        Collapse Sidebar
-      </v-btn>
+      <!-- Collapse button at bottom - fixed position -->
+      <div class="collapse-button-container">
+        <v-btn
+          block
+          variant="text"
+          class="collapse-btn-bottom"
+          @click="$emit('update:model-value', false)"
+          prepend-icon="mdi-chevron-left"
+        >
+          Collapse Sidebar
+        </v-btn>
+      </div>
     </div>
   </v-navigation-drawer>
 </template>
@@ -185,29 +193,68 @@ export default defineComponent({
 .custom-drawer {
   background-color: #fafafa !important;
   border-right: 1px solid #e0e0e0;
-  /* Full height from navbar to bottom */
+  
+  /* Critical positioning fixes */
+  position: fixed !important;
   height: calc(100vh - 48px) !important;
   max-height: calc(100vh - 48px) !important;
   top: 48px !important;
-  bottom: auto !important;
-  z-index: 1;
-  /* Smooth transition for open/close */
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  left: 0 !important;
+  bottom: 0 !important;
+  
+  /* Z-index: must be below navbar */
+  z-index: 1005 !important;
+  
+  /* Prevent ANY overflow - strict containment */
+  overflow: hidden !important;
+  contain: layout style paint !important;
+  
+  /* Clip anything that tries to escape */
+  clip-path: inset(0) !important;
+  
+  /* Smooth transition */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* When drawer is closed, move it off-screen */
+.custom-drawer:not(.v-navigation-drawer--active) {
+  transform: translateX(-100%) !important;
+}
+
+/* Inner container - strict height control */
+.drawer-inner-container {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Navigation list takes available space */
-:deep(.v-list) {
-  flex: 1;
+/* Scrollable container for lists */
+.lists-scroll-container {
+  flex: 1 1 auto;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  max-height: 100%;
 }
 
-/* Collapse button at bottom */
+/* List styling */
+:deep(.v-list) {
+  background: transparent;
+}
+
+/* Collapse button - must stay inside drawer */
 .collapse-button-container {
   padding: 8px;
   border-top: 1px solid #e0e0e0;
   background-color: #fafafa;
+  flex-shrink: 0;
+  flex-grow: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .collapse-btn-bottom {
@@ -245,25 +292,31 @@ export default defineComponent({
   text-transform: capitalize;
 }
 
-/* Scrollbar styling */
-.custom-drawer :deep(.v-navigation-drawer__content) {
-  overflow-y: auto;
-}
-
-.custom-drawer :deep(.v-navigation-drawer__content)::-webkit-scrollbar {
+/* Scrollbar styling for lists container */
+.lists-scroll-container::-webkit-scrollbar {
   width: 6px;
 }
 
-.custom-drawer :deep(.v-navigation-drawer__content)::-webkit-scrollbar-track {
+.lists-scroll-container::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
 
-.custom-drawer :deep(.v-navigation-drawer__content)::-webkit-scrollbar-thumb {
+.lists-scroll-container::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
 }
 
-.custom-drawer :deep(.v-navigation-drawer__content)::-webkit-scrollbar-thumb:hover {
+.lists-scroll-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Override Vuetify's default positioning */
+:deep(.v-navigation-drawer__scrim) {
+  display: none !important;
+}
+
+:deep(.v-navigation-drawer__prepend),
+:deep(.v-navigation-drawer__append) {
+  overflow: hidden !important;
 }
 </style>
