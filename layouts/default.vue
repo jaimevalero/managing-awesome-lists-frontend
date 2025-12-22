@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <NavBar @toggle-drawer="toggleDrawer" />
-    <NavigationMenu v-model="drawer" @update:model-value="drawer = $event" />
+    <NavigationMenu v-model="drawer" />
     <v-main :class="{ 'drawer-collapsed': !drawer }">
       <slot />
     </v-main>
@@ -37,31 +37,30 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Main content padding with transition */
+/* Main content padding */
 :deep(.v-main) {
   padding-left: 256px !important;
-  padding-bottom: 0 !important;
-  padding-top: 48px !important; /* Account for navbar */
-  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: calc(100vh - 48px);
+  padding-top: 48px !important;
+  transition: padding-left 0.3s ease;
 }
 
-/* When drawer is collapsed */
 :deep(.v-main.drawer-collapsed) {
   padding-left: 0 !important;
 }
 
-/* Remove default padding */
-:deep(.v-main__wrap) {
-  padding-bottom: 0 !important;
+/* Force proper stacking context */
+:deep(.v-app-bar) {
+  z-index: 1100 !important;
 }
 
-/* Ensure v-app has proper stacking context */
-:deep(.v-application) {
-  overflow: hidden;
+:deep(.v-navigation-drawer) {
+  z-index: 999 !important;
 }
 
-/* On mobile, remove the left padding */
+:deep(.v-main) {
+  z-index: 998 !important;
+}
+
 @media (max-width: 1280px) {
   :deep(.v-main) {
     padding-left: 0 !important;

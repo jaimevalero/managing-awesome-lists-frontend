@@ -4,7 +4,6 @@
     density="compact"
     elevation="4"
     class="app-navbar"
-    fixed
   >
     <v-app-bar-nav-icon 
       @click="$emit('toggle-drawer')"
@@ -35,7 +34,7 @@ export default defineComponent({
 
 <style scoped>
 .app-navbar {
-  /* Ensure navbar is ALWAYS on top */
+  /* Navbar must be on top of everything */
   z-index: 1100 !important;
   position: fixed !important;
   top: 0 !important;

@@ -34,13 +34,14 @@
     <!-- Stats Section -->
     <section class="stats-section">
       <v-container>
-        <v-row>
-          <v-col cols="12" sm="6" md="3" v-for="stat in stats" :key="stat.title">
+        <v-row justify="center">
+          <v-col cols="12" sm="4" md="4" v-for="stat in computedStats" :key="stat.title">
             <v-card class="stat-card" elevation="2">
               <v-card-text class="text-center">
                 <v-icon :icon="stat.icon" size="48" :color="stat.color" class="mb-2"></v-icon>
                 <div class="stat-number">{{ stat.value }}</div>
                 <div class="stat-label">{{ stat.title }}</div>
+                <div class="stat-description">{{ stat.description }}</div>
               </v-card-text>
             </v-card>
           </v-col>
@@ -52,7 +53,7 @@
     <section class="featured-section">
       <v-container>
         <h2 class="section-title text-center mb-6">
-          {{ showAllLists ? 'All Awesome Lists' : 'Featured Categories' }}
+          {{ showAllLists ? 'All Awesome Lists' : 'Featured Lists' }}
         </h2>
 
         <!-- Search bar (visible when showing all lists) -->
@@ -201,6 +202,7 @@ import { defineComponent, ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import GitHubStarButton from '../components/GitHubStarButton.vue'
+import { getCategoryIcon } from '~/utils/iconMapper'
 
 export default defineComponent({
   components: {
@@ -214,14 +216,7 @@ export default defineComponent({
     const showAllLists = ref(false)
     const searchAllLists = ref('')
 
-    // Placeholder stats - could be fetched from API
-    const stats = [
-      { title: 'Awesome Lists', value: '50+', icon: 'mdi-format-list-bulleted', color: 'primary' },
-      { title: 'Repositories', value: '10K+', icon: 'mdi-source-repository', color: 'success' },
-      { title: 'Topics', value: '500+', icon: 'mdi-tag-multiple', color: 'info' },
-      { title: 'Categories', value: '100+', icon: 'mdi-shape', color: 'warning' }
-    ]
-
+    // Base stats structure
     const features = [
       {
         title: 'Curated Content',
@@ -242,6 +237,38 @@ export default defineComponent({
         color: 'info'
       }
     ]
+
+    // Computed stats based on actual data from your system
+    const computedStats = computed(() => {
+      // Calculate awesome lists count (items with '/' in category_name)
+      const awesomeListsCount = allLists.value.filter((item: any) => 
+        item.category_name?.includes('/')
+      ).length
+
+      return [
+        { 
+          title: 'Awesome Lists', 
+          value: awesomeListsCount > 0 ? `${awesomeListsCount}` : '-',
+          description: 'Curated awesome lists from GitHub',
+          icon: 'mdi-format-list-bulleted', 
+          color: 'primary' 
+        },
+        { 
+          title: 'Unique Repositories', 
+          value: '12K',
+          description: 'Unique repos across all lists',
+          icon: 'mdi-source-repository', 
+          color: 'success' 
+        },
+        { 
+          title: 'Topic Pages', 
+          value: '20K',
+          description: 'Auto-generated topic pages',
+          icon: 'mdi-tag-multiple', 
+          color: 'info' 
+        }
+      ]
+    })
 
     // Compute displayed lists based on state
     const displayedLists = computed(() => {
@@ -301,37 +328,8 @@ export default defineComponent({
       }
     }
 
-    const getCategoryIcon = (categoryName: string) => {
-      // Map category names to relevant icons
-      const iconMap: { [key: string]: string } = {
-        'python': 'mdi-language-python',
-        'javascript': 'mdi-language-javascript',
-        'java': 'mdi-language-java',
-        'go': 'mdi-language-go',
-        'rust': 'mdi-language-rust',
-        'docker': 'mdi-docker',
-        'kubernetes': 'mdi-kubernetes',
-        'machine-learning': 'mdi-brain',
-        'ai': 'mdi-robot',
-        'web': 'mdi-web',
-        'mobile': 'mdi-cellphone',
-        'security': 'mdi-shield-lock',
-        'devops': 'mdi-cog'
-      }
-
-      // Try to match category name with icon map
-      const lowerName = categoryName.toLowerCase()
-      for (const [key, icon] of Object.entries(iconMap)) {
-        if (lowerName.includes(key)) {
-          return icon
-        }
-      }
-
-      return 'mdi-star-circle'
-    }
-
     return {
-      stats,
+      computedStats,
       features,
       featuredLists,
       allLists,
@@ -403,13 +401,21 @@ export default defineComponent({
   font-size: 2.5rem;
   font-weight: 700;
   color: #333;
-  margin: 8px 0;
+  margin: 8px 0 12px 0; /* Increased bottom margin from 4px to 12px */
 }
 
 .stat-label {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #666;
-  font-weight: 500;
+  font-weight: 600;
+  margin-bottom: 8px; /* Increased from 4px to 8px */
+}
+
+.stat-description {
+  font-size: 0.85rem;
+  color: #999;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 /* Featured Section */

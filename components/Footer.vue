@@ -45,9 +45,8 @@ export default defineComponent({
 <style scoped>
 .footer-container {
   padding: 0 !important;
-  /* Force footer to span full width - override Vuetify defaults */
-  width: 100vw !important;
-  max-width: none !important;
+  /* Force footer to span full width without viewport overflow */
+
   left: 0 !important;
   right: 0 !important;
   margin: 0 !important;

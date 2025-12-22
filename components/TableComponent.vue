@@ -245,7 +245,7 @@ export default defineComponent({
 .items-per-page-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px; /* Increased from 8px */
 }
 
 .selector-label {
@@ -256,7 +256,17 @@ export default defineComponent({
 }
 
 .items-select {
-  width: 80px;
+  min-width: 90px ; /* Changed from width: 80px */
+  max-width: 108px ;
+}
+
+/* Ensure select dropdown text is fully visible */
+:deep(.items-select .v-field__input) {
+  padding: 0 12px !important;
+}
+
+:deep(.items-select .v-field) {
+  min-width: 100px !important;
 }
 
 /* Pagination styling */
@@ -282,6 +292,11 @@ export default defineComponent({
   .items-per-page-selector {
     width: 100%;
     justify-content: center;
+  }
+
+  .items-select {
+    min-width: 120px !important;
+    max-width: 150px !important;
   }
 }
 </style>

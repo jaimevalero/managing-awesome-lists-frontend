@@ -1,12 +1,10 @@
 <template>
   <v-navigation-drawer 
-    :model-value="modelValue"
-    @update:model-value="$emit('update:model-value', $event)"
+    v-model="internalModel"
     class="custom-drawer"
     :width="256"
-    :permanent="false"
-    :temporary="false"
     :rail="false"
+    location="left"
   >
     <!-- Inner container to control all content -->
     <div class="drawer-inner-container">
@@ -90,6 +88,7 @@
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
+import { getCategoryIcon, formatCategoryName } from '~/utils/iconMapper'
 
 export default defineComponent({
   props: {
@@ -136,8 +135,7 @@ export default defineComponent({
     }
 
     const formatDisplayName = (display: string) => {
-      // Remove 'awesome-' prefix and clean up the name
-      return display.replace('awesome-', '').replace(/-/g, ' ')
+      return formatCategoryName(display)
     }
 
     const isActive = (item: any) => {
@@ -145,36 +143,10 @@ export default defineComponent({
       return currentPath === item.category_name
     }
 
-    const getCategoryIcon = (categoryName: string) => {
-      // Map category names to relevant icons
-      const iconMap: { [key: string]: string } = {
-        'python': 'mdi-language-python',
-        'javascript': 'mdi-language-javascript',
-        'java': 'mdi-language-java',
-        'go': 'mdi-language-go',
-        'rust': 'mdi-language-rust',
-        'docker': 'mdi-docker',
-        'kubernetes': 'mdi-kubernetes',
-        'machine-learning': 'mdi-brain',
-        'ai': 'mdi-robot',
-        'web': 'mdi-web',
-        'mobile': 'mdi-cellphone',
-        'security': 'mdi-shield-lock',
-        'devops': 'mdi-cog',
-        'database': 'mdi-database',
-        'cloud': 'mdi-cloud',
-        'testing': 'mdi-test-tube'
-      }
-
-      const lowerName = categoryName.toLowerCase()
-      for (const [key, icon] of Object.entries(iconMap)) {
-        if (lowerName.includes(key)) {
-          return icon
-        }
-      }
-
-      return 'mdi-file-document-outline'
-    }
+    const internalModel = computed({
+      get: () => props.modelValue,
+      set: (value) => emit('update:model-value', value)
+    })
 
     return {
       items,
@@ -183,7 +155,8 @@ export default defineComponent({
       navigateTo,
       formatDisplayName,
       isActive,
-      getCategoryIcon
+      getCategoryIcon,
+      internalModel
     }
   }
 })
@@ -194,59 +167,41 @@ export default defineComponent({
   background-color: #fafafa !important;
   border-right: 1px solid #e0e0e0;
   
-  /* Critical positioning fixes */
-  position: fixed !important;
+  /* Strict positioning - drawer MUST be below navbar */
   height: calc(100vh - 48px) !important;
-  max-height: calc(100vh - 48px) !important;
   top: 48px !important;
-  left: 0 !important;
-  bottom: 0 !important;
   
-  /* Z-index: must be below navbar */
-  z-index: 1005 !important;
+  /* Z-index: MUST be below navbar (navbar is 1100) */
+  z-index: 999 !important;
   
-  /* Prevent ANY overflow - strict containment */
+  /* Prevent overflow */
   overflow: hidden !important;
-  contain: layout style paint !important;
-  
-  /* Clip anything that tries to escape */
-  clip-path: inset(0) !important;
-  
-  /* Smooth transition */
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* When drawer is closed, move it off-screen */
-.custom-drawer:not(.v-navigation-drawer--active) {
-  transform: translateX(-100%) !important;
+/* Force Vuetify drawer content to stay within bounds */
+:deep(.v-navigation-drawer__content) {
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
-/* Inner container - strict height control */
+/* Inner container - strict containment */
 .drawer-inner-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
-  max-height: 100%;
   overflow: hidden;
-  position: relative;
 }
 
 /* Scrollable container for lists */
 .lists-scroll-container {
-  flex: 1 1 auto;
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
-  max-height: 100%;
 }
 
-/* List styling */
-:deep(.v-list) {
-  background: transparent;
-}
-
-/* Collapse button - must stay inside drawer */
+/* Collapse button at bottom */
 .collapse-button-container {
   padding: 8px;
   border-top: 1px solid #e0e0e0;
