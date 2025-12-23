@@ -86,14 +86,15 @@
           </v-col>
         </v-row>
 
-        <v-row v-else>
+        <transition-group v-else name="list-fade" tag="div" class="v-row" appear>
           <v-col 
             cols="12" 
             sm="6" 
             md="4" 
             lg="3"
             v-for="(item, index) in displayedLists" 
-            :key="index"
+            :key="item.category_name || index"
+            class="list-item-animated"
           >
             <v-card 
               class="category-card" 
@@ -124,7 +125,7 @@
               </v-card-actions>
             </v-card>
           </v-col>
-        </v-row>
+        </transition-group>
 
         <!-- Toggle button -->
         <v-row v-if="!loading && allLists.length > 8" class="mt-6">
@@ -135,7 +136,7 @@
               size="large"
               variant="outlined"
               prepend-icon="mdi-view-grid-plus"
-              @click="showAllLists = true"
+              @click="expandAllLists"
             >
               View All {{ allLists.length }} Lists
             </v-btn>
@@ -308,11 +309,15 @@ export default defineComponent({
       }
     }
 
+    const expandAllLists = () => {
+      showAllLists.value = true
+      // No scroll - let user see the animation in place
+    }
+
     const collapseAllLists = () => {
       showAllLists.value = false
       searchAllLists.value = ''
-      // Scroll to featured section
-      window.scrollTo({ top: 400, behavior: 'smooth' })
+      // No scroll - let user stay where they are to see the animation
     }
 
     const truncateDescription = (description: string, maxLength: number = 60) => {
@@ -338,6 +343,7 @@ export default defineComponent({
       searchAllLists,
       displayedLists,
       navigateTo,
+      expandAllLists,
       collapseAllLists,
       openDrawer,
       getCategoryIcon,
@@ -571,6 +577,34 @@ export default defineComponent({
 
 .lists-grid::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* List transition animations */
+.list-item-animated {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.list-fade-enter-active {
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.list-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+  position: absolute;
+}
+
+.list-fade-enter-from {
+  opacity: 0;
+  transform: translateY(30px) scale(0.9);
+}
+
+.list-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+}
+
+.list-fade-move {
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* Responsive */
