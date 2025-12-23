@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-container">
     <!-- Search, sort, and results info row -->
     <v-row class="mb-4">
       <v-col cols="12" md="3">
@@ -223,6 +223,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.table-container {
+  padding: 0 12px;
+}
+
 .results-info {
   display: flex;
   align-items: center;

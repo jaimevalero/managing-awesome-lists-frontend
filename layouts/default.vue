@@ -41,11 +41,12 @@ export default defineComponent({
 :deep(.v-main) {
   padding-left: 256px !important;
   padding-top: 48px !important;
+  padding-right: 24px !important;
   transition: padding-left 0.3s ease;
 }
 
 :deep(.v-main.drawer-collapsed) {
-  padding-left: 0 !important;
+  padding-left: 24px !important;
 }
 
 /* Force proper stacking context */
