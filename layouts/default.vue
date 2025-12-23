@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import NavigationMenu from '../components/NavigationMenu.vue'
@@ -22,10 +22,23 @@ export default defineComponent({
     NavigationMenu
   },
   setup() {
+    // Start with default value, will be updated from localStorage on mount
     const drawer = ref(true)
+
+    // Load drawer state from localStorage after component mounts (client-side only)
+    onMounted(() => {
+      const storedDrawerState = localStorage.getItem('drawer-open')
+      if (storedDrawerState !== null) {
+        drawer.value = storedDrawerState === 'true'
+      }
+    })
 
     const toggleDrawer = () => {
       drawer.value = !drawer.value
+      // Persist drawer state to localStorage
+      if (process.client) {
+        localStorage.setItem('drawer-open', drawer.value.toString())
+      }
     }
 
     return { 
@@ -39,14 +52,15 @@ export default defineComponent({
 <style scoped>
 /* Main content padding */
 :deep(.v-main) {
-  padding-left: 256px !important;
   padding-top: 48px !important;
   padding-right: 24px !important;
-  transition: padding-left 0.3s ease;
+  padding-left: 24px !important;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
 }
 
-:deep(.v-main.drawer-collapsed) {
-  padding-left: 24px !important;
+:deep(.v-main:not(.drawer-collapsed)) {
+  margin-left: 256px !important;
 }
 
 /* Force proper stacking context */
@@ -62,7 +76,7 @@ export default defineComponent({
   z-index: 998 !important;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 960px) {
   :deep(.v-main) {
     padding-left: 0 !important;
   }

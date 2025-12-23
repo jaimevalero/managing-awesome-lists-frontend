@@ -62,7 +62,7 @@ export default defineComponent({
 }
 
 /* On mobile, no negative margin */
-@media (max-width: 1280px) {
+@media (max-width: 960px) {
   .footer-container,
   .footer-container.drawer-open {
     margin-left: 0 !important;

@@ -5,6 +5,7 @@
     :width="256"
     :rail="false"
     location="left"
+    :scrim="false"
   >
     <!-- Inner container to control all content -->
     <div class="drawer-inner-container">
