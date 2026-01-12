@@ -21,8 +21,8 @@
               color="primary"
               size="x-large"
               class="mt-4"
-              prepend-icon="mdi-compass"
-              @click="openDrawer"
+              prepend-icon="mdi-arrow-down-circle"
+              @click="scrollToLists"
             >
               Explore Awesome Lists
             </v-btn>
@@ -327,9 +327,10 @@ export default defineComponent({
         : description
     }
 
-    const openDrawer = () => {
-      if (featuredLists.value.length > 0) {
-        navigateTo(featuredLists.value[0])
+    const scrollToLists = () => {
+      const section = document.querySelector('.featured-section')
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }
 
@@ -345,7 +346,7 @@ export default defineComponent({
       navigateTo,
       expandAllLists,
       collapseAllLists,
-      openDrawer,
+      scrollToLists,
       getCategoryIcon,
       truncateDescription
     }
