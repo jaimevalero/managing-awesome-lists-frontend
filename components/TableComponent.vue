@@ -123,16 +123,14 @@ export default defineComponent({
     }
 
     // Sort options with clear labels
+    // Cuatro maneras de ordenar, no ocho: la mayoria de estas listas tienen unas pocas
+    // decenas de repos, y ordenarlas al reves o por nombre no responde a ninguna pregunta
+    // que alguien se haga al mirarlas
     const sortOptions = [
       { title: '🔥 Hot', value: 'hot-desc' },
       { title: '🏆 Top (most stars)', value: 'stars-desc' },
       { title: '🆕 New (recently created)', value: 'created-desc' },
-      { title: '🔄 Recently updated', value: 'updated-desc' },
-      { title: '⭐ Fewest stars', value: 'stars-asc' },
-      { title: '📅 Oldest first', value: 'created-asc' },
-      { title: '🕰️ Least recently updated', value: 'updated-asc' },
-      { title: '🔤 Name (A-Z)', value: 'name-asc' },
-      { title: '🔤 Name (Z-A)', value: 'name-desc' }
+      { title: '🔄 Recently updated', value: 'updated-desc' }
     ]
 
     // Filter repos based on search term across multiple fields
@@ -167,20 +165,10 @@ export default defineComponent({
           return sorted.sort((a, b) => hotScore(b) - hotScore(a))
         case 'stars-desc':
           return sorted.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
-        case 'stars-asc':
-          return sorted.sort((a, b) => (a.stargazers_count || 0) - (b.stargazers_count || 0))
         case 'updated-desc':
           return sorted.sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
-        case 'updated-asc':
-          return sorted.sort((a, b) => new Date(a.pushed_at).getTime() - new Date(b.pushed_at).getTime())
         case 'created-desc':
           return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        case 'created-asc':
-          return sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-        case 'name-asc':
-          return sorted.sort((a, b) => a.full_name.localeCompare(b.full_name))
-        case 'name-desc':
-          return sorted.sort((a, b) => b.full_name.localeCompare(a.full_name))
         default:
           return sorted
       }
