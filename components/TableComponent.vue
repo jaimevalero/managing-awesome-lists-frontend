@@ -105,8 +105,21 @@ export default defineComponent({
     const itemsPerPageOptions = [12, 24, 48, 96]
     const sortBy = ref('stars-desc')
 
+    // Estrellas por dia de vida del repo: premia lo que ha gustado rapido, no lo que
+    // lleva diez anos acumulando. Los 90 dias sumados a la edad son los que dejan fuera
+    // lo recien creado con cuatro estrellas: sin ellos, en el topic "skills" un repo de
+    // 13 dias con 18 estrellas adelanta a uno con 239
+    const HOT_SMOOTHING_DAYS = 90
+    const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+
+    const hotScore = (repo: any) => {
+      const ageInDays = (Date.now() - new Date(repo.created_at).getTime()) / MILLISECONDS_PER_DAY
+      return (repo.stargazers_count || 0) / (ageInDays + HOT_SMOOTHING_DAYS)
+    }
+
     // Sort options with clear labels
     const sortOptions = [
+      { title: '🔥 Hottest (stars per day)', value: 'hot-desc' },
       { title: '⭐ Stars (High to Low)', value: 'stars-desc' },
       { title: '⭐ Stars (Low to High)', value: 'stars-asc' },
       { title: '🔄 Recently Updated', value: 'updated-desc' },
@@ -145,6 +158,8 @@ export default defineComponent({
       const sorted = [...repos]
 
       switch (sortOption) {
+        case 'hot-desc':
+          return sorted.sort((a, b) => hotScore(b) - hotScore(a))
         case 'stars-desc':
           return sorted.sort((a, b) => (b.stargazers_count || 0) - (a.stargazers_count || 0))
         case 'stars-asc':
