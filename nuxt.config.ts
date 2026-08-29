@@ -1,6 +1,14 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
+	  app: {
+    head: {
+      htmlAttrs: { lang: 'en' },
+      meta: [
+        { name: 'robots', content: 'index, follow' }
+      ]
+    }
+  },
 	  nitro: {
     storage: {
       data: {

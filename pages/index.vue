@@ -199,9 +199,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 import GitHubStarButton from '../components/GitHubStarButton.vue'
 import { getCategoryIcon } from '~/utils/iconMapper'
 
@@ -210,12 +209,36 @@ export default defineComponent({
     GitHubStarButton
   },
   setup() {
+    useHead({
+      title: 'Awesome List Viewer — explora listas awesome de GitHub',
+      meta: [
+        {
+          name: 'description',
+          content: 'Explora y busca en cientos de listas awesome de GitHub: más de 12.000 repositorios curados, filtrables por tema y ordenables por popularidad.'
+        },
+        { property: 'og:title', content: 'Awesome List Viewer' },
+        {
+          property: 'og:description',
+          content: 'Explora y busca en cientos de listas awesome de GitHub: más de 12.000 repositorios curados, filtrables por tema y ordenables por popularidad.'
+        },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: 'https://managing-awesome-lists.vercel.app/' }
+      ],
+      link: [
+        { rel: 'canonical', href: 'https://managing-awesome-lists.vercel.app/' }
+      ]
+    })
+
     const router = useRouter()
-    const loading = ref(true)
-    const allLists = ref([])
-    const featuredLists = ref([])
     const showAllLists = ref(false)
     const searchAllLists = ref('')
+
+    // useAsyncData corre en el servidor: el HTML inicial ya trae las listas,
+    // en vez del "0 lists available" que dejaba el fetch en onMounted.
+    const { data: allListsData, pending: loading } = useAsyncData('lists', () => $fetch('/lists.json'))
+
+    const allLists = computed(() => allListsData.value || [])
+    const featuredLists = computed(() => allLists.value.slice(0, 8))
 
     // Base stats structure
     const features = [
@@ -289,18 +312,6 @@ export default defineComponent({
         const matchesDescription = item.description?.toLowerCase().includes(searchLower)
         return matchesDisplay || matchesName || matchesDescription
       })
-    })
-
-    onMounted(async () => {
-      try {
-        const response = await axios.get('/lists.json')
-        allLists.value = response.data
-        featuredLists.value = response.data.slice(0, 8)
-      } catch (error) {
-        console.error('Error loading lists:', error)
-      } finally {
-        loading.value = false
-      }
     })
 
     const navigateTo = async (item: any) => {
