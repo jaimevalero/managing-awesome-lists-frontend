@@ -37,6 +37,7 @@
         :href="'https://github.com/' + repo.full_name"
         target="_blank"
         class="related-row"
+        :title="repo.description || repo.full_name"
       >
         <div class="related-row-main">
           <span class="related-name">{{ repo.full_name }}</span>
