@@ -46,6 +46,8 @@
         <div class="language-badge" v-if="repo.language">
           {{ repo.language }}
         </div>
+
+        <RelatedRepos :full-name="repo.full_name" class="ml-auto" />
       </div>
 
       <!-- Topics section at the bottom -->
@@ -62,10 +64,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import LabelTopic from './LabelTopic.vue'
+import RelatedRepos from './RelatedRepos.vue'
 
 export default defineComponent({
   components: {
-    LabelTopic
+    LabelTopic,
+    RelatedRepos
   },
   props: {
     repo: {
