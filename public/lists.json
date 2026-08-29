@@ -65,6 +65,11 @@
         "display": "claude"
     },
     {
+        "category_name": "hesreallyhim/awesome-claude-code",
+        "description": "A curated list of awesome skills, hooks, slash-commands, agent orchestrators, applications, and plugins for Claude Code by Anthropic",
+        "display": "claude-code"
+    },
+    {
         "category_name": "VoltAgent/awesome-claude-code-subagents",
         "description": "A collection of 100+ specialized Claude Code subagents covering a wide range of development use cases",
         "display": "claude-code-subagents"
