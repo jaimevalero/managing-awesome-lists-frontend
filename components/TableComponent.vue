@@ -105,27 +105,32 @@ export default defineComponent({
     const itemsPerPageOptions = [12, 24, 48, 96]
     const sortBy = ref('stars-desc')
 
-    // Estrellas por dia de vida del repo: premia lo que ha gustado rapido, no lo que
-    // lleva diez anos acumulando. Los 90 dias sumados a la edad son los que dejan fuera
-    // lo recien creado con cuatro estrellas: sin ellos, en el topic "skills" un repo de
-    // 13 dias con 18 estrellas adelanta a uno con 239
-    const HOT_SMOOTHING_DAYS = 90
+    // "Hot" a la manera de reddit: logaritmico en la puntuacion y lineal en el tiempo.
+    // El logaritmo es lo que hace que un repo reciente con 7.000 estrellas pueda ganar a
+    // uno de hace tres anos con 160.000: las primeras estrellas valen mucho mas que las
+    // siguientes. Un ano de antiguedad cuesta lo mismo que dividir las estrellas por 10.
     const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+    const DAYS_PER_TENFOLD = 365
+    // A partir de tres anos, envejecer mas no penaliza. Sin este tope la formula entierra
+    // a los clasicos: en "static-site-generator" un repo de 9 estrellas adelantaba a
+    // next.js y a hugo, y en un topic donde todo es viejo ganaba cualquier recien llegado
+    const MAX_PENALIZED_AGE_DAYS = 3 * 365
 
     const hotScore = (repo: any) => {
       const ageInDays = (Date.now() - new Date(repo.created_at).getTime()) / MILLISECONDS_PER_DAY
-      return (repo.stargazers_count || 0) / (ageInDays + HOT_SMOOTHING_DAYS)
+      const penalizedAge = Math.min(Math.max(ageInDays, 0), MAX_PENALIZED_AGE_DAYS)
+      return Math.log10(Math.max(repo.stargazers_count || 0, 1)) - penalizedAge / DAYS_PER_TENFOLD
     }
 
     // Sort options with clear labels
     const sortOptions = [
-      { title: '🔥 Hottest (stars per day)', value: 'hot-desc' },
-      { title: '⭐ Stars (High to Low)', value: 'stars-desc' },
-      { title: '⭐ Stars (Low to High)', value: 'stars-asc' },
-      { title: '🔄 Recently Updated', value: 'updated-desc' },
-      { title: '🔄 Least Recently Updated', value: 'updated-asc' },
-      { title: '📅 Recently Created', value: 'created-desc' },
-      { title: '📅 Oldest First', value: 'created-asc' },
+      { title: '🔥 Hot', value: 'hot-desc' },
+      { title: '🏆 Top (most stars)', value: 'stars-desc' },
+      { title: '🆕 New (recently created)', value: 'created-desc' },
+      { title: '🔄 Recently updated', value: 'updated-desc' },
+      { title: '⭐ Fewest stars', value: 'stars-asc' },
+      { title: '📅 Oldest first', value: 'created-asc' },
+      { title: '🕰️ Least recently updated', value: 'updated-asc' },
       { title: '🔤 Name (A-Z)', value: 'name-asc' },
       { title: '🔤 Name (Z-A)', value: 'name-desc' }
     ]
