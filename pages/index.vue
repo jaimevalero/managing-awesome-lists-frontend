@@ -114,15 +114,20 @@
                 </div>
                 <h3 class="category-title">{{ item.display }}</h3>
                 
-                <!-- Description with tooltip -->
-                <v-tooltip location="bottom" max-width="400">
-                  <template v-slot:activator="{ props }">
-                    <p class="category-description" v-bind="props">
-                      {{ truncateDescription(item.description, showAllLists ? 60 : 100) }}
-                    </p>
-                  </template>
-                  <span>{{ item.description || 'Explore this awesome list' }}</span>
-                </v-tooltip>
+                <!-- El titulo nativo del navegador, no v-tooltip. Vuetify pinta el
+                     tooltip teletransportado a un contenedor de overlays que no hidrata:
+                     el arbol del cliente no cuadraba con el HTML servido y Vue acababa
+                     con "Cannot read properties of null (reading 'parentNode')". El
+                     sintoma era que la barra lateral dejaba de navegar -la URL cambiaba
+                     y la pagina no- porque el arbol ya estaba roto desde la portada.
+                     No se veia en produccion solo porque el SSR fallaba y no llegaba a
+                     renderizar ninguna tarjeta. -->
+                <p
+                  class="category-description"
+                  :title="item.description || 'Explore this awesome list'"
+                >
+                  {{ truncateDescription(item.description, showAllLists ? 60 : 100) }}
+                </p>
               </v-card-text>
               <v-card-actions>
                 <v-btn color="primary" variant="text" append-icon="mdi-arrow-right">

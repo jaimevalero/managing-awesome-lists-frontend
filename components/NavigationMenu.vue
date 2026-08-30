@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue'
+import { defineComponent, ref, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 import { getCategoryIcon, formatCategoryName } from '~/utils/iconMapper'
@@ -131,12 +131,13 @@ export default defineComponent({
   },
   emits: ['update:model-value'],
   setup(props, { emit }) {
-    // En SSR: el menu lateral es el grafo de enlaces internos del sitio, y
-    // cargandolo en onMounted no llegaba al HTML servido — un crawler veia
-    // "No lists found" y ni un solo enlace a las 83 listas. Comparte la clave
-    // 'lists' con la portada, asi que Nuxt reutiliza el mismo payload.
-    const { data: listsData } = usePublicJson<any[]>('lists', () => '/lists.json')
-    const items = computed(() => listsData.value || [])
+    // En cliente y no en SSR, a proposito. Renderizar estos 80 elementos en servidor
+    // seria mejor para SEO -son el grafo de enlaces internos del sitio- pero rompe la
+    // hidratacion: los ids que Vuetify autogenera dejan de coincidir (input-3 contra
+    // input-24), el contenedor de overlays de los v-tooltip no cuadra, y Vue pierde el
+    // arbol. El sintoma es que la barra deja de navegar: la URL cambia y la pagina no.
+    // Volver a intentarlo exige arreglar antes la hidratacion de Vuetify.
+    const items = ref([])
     const router = useRouter()
     const route = useRoute()
     const searchQuery = ref('')
@@ -206,6 +207,15 @@ export default defineComponent({
 
     watch(isSearching, (searching) => {
       if (searching) loadTopics()
+    })
+
+    onMounted(async () => {
+      try {
+        const response = await axios.get('/lists.json')
+        items.value = response.data
+      } catch (error) {
+        console.error('Error loading lists:', error)
+      }
     })
 
     const navigateTo = async (item: any) => {
