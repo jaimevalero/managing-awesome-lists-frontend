@@ -47,7 +47,18 @@
           {{ repo.language }}
         </div>
 
-        <RelatedRepos :full-name="repo.full_name" :topics="repo.topics || []" class="ml-auto" />
+        <!-- Un enlace, no un menu flotante: preguntar "que se parece a esto" merece una
+             pagina, no cinco lineas en un popup del que hay que volver a salir. Ademas
+             el v-menu que habia aqui es otro overlay de Vuetify de los que no hidratan -->
+        <v-btn
+          :to="similarPath"
+          icon="mdi-vector-link"
+          size="x-small"
+          variant="text"
+          density="comfortable"
+          class="similar-btn ml-auto"
+          title="Similar repositories"
+        ></v-btn>
       </div>
 
       <!-- Topics section at the bottom -->
@@ -62,20 +73,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import LabelTopic from './LabelTopic.vue'
-import RelatedRepos from './RelatedRepos.vue'
 
 export default defineComponent({
   components: {
-    LabelTopic,
-    RelatedRepos
+    LabelTopic
   },
   props: {
     repo: {
       type: Object,
       required: true
     }
+  },
+  setup(props) {
+    // El backend nombra los ficheros con '@' en vez de '/', y la ruta generica
+    // /a-<type>/<name> los busca por ese mismo nombre
+    const similarPath = computed(() => `/a-similar/${props.repo.full_name.replace('/', '@')}`)
+    return { similarPath }
   },
   methods: {
     formatStars(count: number) {
@@ -104,6 +119,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.similar-btn {
+  color: #9e9e9e;
+}
+
+.similar-btn:hover {
+  color: #667eea;
+}
+
 .repo-card {
   height: 100%;
   display: flex;

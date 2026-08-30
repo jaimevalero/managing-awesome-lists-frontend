@@ -17,7 +17,14 @@
       <TableComponent :reposData="jsonData.repos_data" />
     </div>
     <div v-else-if="!pending">
-      <v-alert v-if="notFound" type="warning" variant="tonal" class="ma-4">
+      <!-- El backend no escribe fichero para los repos sin parecidos, asi que aqui un
+           404 no es un error: es la respuesta, y son 3.708 repos. Decir "no encontrada"
+           haria pensar que la web esta rota -->
+      <v-alert v-if="notFound && isSimilarPage" type="info" variant="tonal" class="ma-4">
+        No similar repositories found for
+        <a :href="'https://github.com/' + originRepo" target="_blank">{{ originRepo }}</a>.
+      </v-alert>
+      <v-alert v-else-if="notFound" type="warning" variant="tonal" class="ma-4">
         No se ha encontrado esta lista.
       </v-alert>
       <v-alert v-else type="error" variant="tonal" class="ma-4">
@@ -68,6 +75,8 @@ export default defineComponent({
     // cargar los datos". Distinguirlos importa: el segundo caso es un fallo
     // nuestro y hay que verlo, no disimularlo con el mismo mensaje del primero.
     const notFound = computed(() => (error.value as any)?.statusCode === 404)
+    const isSimilarPage = computed(() => route.params.type === 'similar')
+    const originRepo = computed(() => String(route.params.name || '').replace('@', '/'))
 
     // useHead con una funcion (en vez de un objeto) es reactivo: unhead vuelve a
     // leerla cuando jsonData cambia, sin depender de que un watch() llegue a
@@ -115,6 +124,8 @@ export default defineComponent({
       jsonData,
       pending,
       notFound,
+      isSimilarPage,
+      originRepo,
       getDescription
     }
   }
