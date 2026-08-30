@@ -103,7 +103,10 @@ export default defineComponent({
     const currentPage = ref(1)
     const itemsPerPage = ref(24)
     const itemsPerPageOptions = [12, 24, 48, 96]
-    const sortBy = ref('stars-desc')
+    // Hot y no Top por defecto: ordenar por estrellas deja siempre arriba a los mismos
+    // repos gigantes, que son justo los que ya conoce todo el mundo. Lo que hace util a
+    // una lista curada es lo que aun no has visto.
+    const sortBy = ref('hot-desc')
 
     // "Hot" a la manera de reddit: logaritmico en la puntuacion y lineal en el tiempo.
     // El logaritmo es lo que hace que un repo reciente con 7.000 estrellas pueda ganar a
