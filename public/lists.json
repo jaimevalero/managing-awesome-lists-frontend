@@ -20,16 +20,6 @@
         "display": "apache-airflow"
     },
     {
-        "category_name": "sindresorhus/awesome",
-        "description": "\ud83d\ude0e Awesome lists about all kinds of interesting topics",
-        "display": "awesome"
-    },
-    {
-        "category_name": "Awesome-Windows/Awesome",
-        "description": ":computer: \ud83c\udf89 An awesome & curated list of best applications and tools for Windows.",
-        "display": "awesome"
-    },
-    {
         "category_name": "donnemartin/awesome-aws",
         "description": "A curated list of awesome Amazon Web Services (AWS) libraries, open source repos, guides, blogs, and other resources.  Featuring the Fiery Meter of AWSome.",
         "display": "aws"
@@ -66,7 +56,7 @@
     },
     {
         "category_name": "hesreallyhim/awesome-claude-code",
-        "description": "A curated list of awesome skills, hooks, slash-commands, agent orchestrators, applications, and plugins for Claude Code by Anthropic",
+        "description": "A hand-picked collection of the finest of resources for the most awesome of agents, Claude Code, the undisputed champion of coding companions, from the unstoppable team at Anthropic PBC. A delectable showcase of top tier skills, ambidextrous agents, scintillating status lines, top notch developer tooling, and also we have plugins",
         "display": "claude-code"
     },
     {
@@ -226,7 +216,7 @@
     },
     {
         "category_name": "AllThingsSmitty/jquery-tips-everyone-should-know",
-        "description": "A collection of tips to help up your jQuery game \ud83c\udfae",
+        "description": "A collection of tips to help up your jQuery game. \ud83c\udfae",
         "display": "jquery-tips-everyone-should-know"
     },
     {
@@ -246,7 +236,7 @@
     },
     {
         "category_name": "jaywcjlove/awesome-mac",
-        "description": "\uf8ff Now we have become very big, Different from the original idea. Collect premium software in various categories.",
+        "description": "\uf8ff This project is dedicated to collecting high-quality macOS software and organizing them systematically by different categories for easy search and use.",
         "display": "mac"
     },
     {
@@ -276,7 +266,7 @@
     },
     {
         "category_name": "sindresorhus/awesome-nodejs",
-        "description": ":zap: Delightful Node.js packages and resources",
+        "description": ":zap: Delightful Node.js packages and resources [BECAUSE OF TOO MUCH SPAM AND LOW-QUALITY SUBMISSIONS, SUBMISSIONS ARE PAUSED UNTIL JULY]",
         "display": "nodejs"
     },
     {
@@ -306,7 +296,7 @@
     },
     {
         "category_name": "vinta/awesome-python",
-        "description": "An opinionated list of awesome Python frameworks, libraries, software and resources.",
+        "description": "The definitive list that answers \"I want to do X in Python, which tool should I use?\"",
         "display": "python"
     },
     {
@@ -391,7 +381,7 @@
     },
     {
         "category_name": "davidsonfellipe/awesome-wpo",
-        "description": ":pencil: A curated list of Web Performance Optimization. Everyone can contribute here!",
+        "description": "A curated list of Web Performance Optimization. ",
         "display": "wpo"
     },
     {
