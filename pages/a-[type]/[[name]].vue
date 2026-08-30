@@ -1,6 +1,12 @@
 <template>
   <div>
     <div v-if="jsonData">
+      <!-- Client-only: el rastro vive en sessionStorage, y estas paginas son noindex
+           de todas formas, asi que no hay nada que renderizar en servidor -->
+      <ClientOnly>
+        <SimilarTrail v-if="jsonData.category_type === 'similar'" :full-name="jsonData.category_name" />
+      </ClientOnly>
+
       <InfoComponent
         :categoryName="jsonData.category_name"
         :frequentTopics="jsonData.frecuent_topics"
@@ -27,16 +33,22 @@ import { computed, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 
 import InfoComponent from '../../components/InfoComponent.vue'
+import SimilarTrail from '../../components/SimilarTrail.vue'
 import TableComponent from '../../components/TableComponent.vue'
 
 const SITE_URL = 'https://managing-awesome-lists.vercel.app'
 // Igual que en scripts/generate-sitemap.mjs: por debajo de esto una pagina de
 // topic es solo 1-2 repos sueltos, no aporta nada que indexar.
 const MIN_TOPIC_REPOS = 5
+// 21.000 paginas de cinco repos son contenido fino a escala, justo lo que se evita
+// con MIN_TOPIC_REPOS. Se navegan, no se buscan: fuera del indice y fuera del sitemap
+// (generate-sitemap.mjs solo recorre awesome y topic, asi que ya no entran)
+const NOINDEX_TYPES = ['similar']
 
 export default defineComponent({
   components: {
-     InfoComponent,
+    InfoComponent,
+    SimilarTrail,
     TableComponent
   },
   setup() {
@@ -72,16 +84,19 @@ export default defineComponent({
       const description = getDescription(data)
         ? `${getDescription(data)} · ${repoCount} recursos curados.`
         : `Lista curada de ${repoCount} recursos sobre ${data.category_name}.`
-      const title = `${data.category_name} — ${repoCount} recursos`
+      const title = data.category_type === 'similar'
+        ? `Similar to ${data.category_name} — ${repoCount} repositories`
+        : `${data.category_name} — ${repoCount} recursos`
       const topics = Object.keys(data.frecuent_topics || {}).join(', ')
       const isThinTopic = data.category_type === 'topic' && repoCount < MIN_TOPIC_REPOS
+      const isNoIndex = isThinTopic || NOINDEX_TYPES.includes(String(route.params.type))
 
       return {
         title,
         meta: [
           { name: 'description', content: description },
           { name: 'keywords', content: topics },
-          { name: 'robots', content: isThinTopic ? 'noindex, follow' : 'index, follow' },
+          { name: 'robots', content: isNoIndex ? 'noindex, follow' : 'index, follow' },
           { property: 'og:title', content: title },
           { property: 'og:description', content: description },
           { property: 'og:type', content: 'website' },

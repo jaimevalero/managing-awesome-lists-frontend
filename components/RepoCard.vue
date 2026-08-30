@@ -47,7 +47,7 @@
           {{ repo.language }}
         </div>
 
-        <RelatedRepos :full-name="repo.full_name" class="ml-auto" />
+        <RelatedRepos :full-name="repo.full_name" :topics="repo.topics || []" class="ml-auto" />
       </div>
 
       <!-- Topics section at the bottom -->

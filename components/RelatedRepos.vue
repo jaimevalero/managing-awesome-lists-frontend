@@ -32,7 +32,7 @@
       <!-- Una linea por repo: si el parecido pesa lo mismo que la tarjeta original,
            has duplicado el peso de la interfaz -->
       <a
-        v-for="repo in related"
+        v-for="repo in similar"
         :key="repo.full_name"
         :href="'https://github.com/' + repo.full_name"
         target="_blank"
@@ -49,11 +49,17 @@
         <div class="related-row-meta">
           <span v-if="repo.language" class="related-language">{{ repo.language }}</span>
           <!-- El porque del parecido: es lo que hace que la sugerencia se crea -->
-          <span v-if="repo.shared_topics.length" class="related-shared">
-            {{ repo.shared_topics.slice(0, 3).map(topic => '#' + topic).join(' ') }}
+          <span v-if="sharedTopics(repo).length" class="related-shared">
+            {{ sharedTopics(repo).map(topic => '#' + topic).join(' ') }}
           </span>
         </div>
       </a>
+
+      <!-- La salida hacia la pagina entera. Sin esto el popover es un callejon: lo que
+           hace util al parecido no es ver cinco, es poder seguir saltando -->
+      <NuxtLink v-if="hasSimilar" :to="allSimilarPath" class="related-more">
+        See all {{ total }} similar repositories
+      </NuxtLink>
     </v-card>
   </v-menu>
 </template>
@@ -67,10 +73,18 @@ export default defineComponent({
     fullName: {
       type: String,
       required: true
+    },
+    // Los topics del repo de origen. Vienen por prop y no del fichero porque los
+    // compartidos son la interseccion de dos listas que el navegador ya tiene, y
+    // guardar ese calculo en 21.000 ficheros son 13 MB de segunda verdad.
+    topics: {
+      type: Array,
+      default: () => []
     }
   },
   setup(props) {
-    const related = ref([])
+    const similar = ref([])
+    const total = ref(0)
     const loading = ref(false)
     const requested = ref(false)
     // El backend solo escribe fichero para los repos que tienen parecidos, asi que un
@@ -78,16 +92,24 @@ export default defineComponent({
     const notFound = ref(false)
 
     const isOpen = ref(false)
-    const isEmpty = computed(() => requested.value && !loading.value && !related.value.length)
+    const isEmpty = computed(() => requested.value && !loading.value && !similar.value.length)
+
+    // El popover ensena cinco; el resto son para la pagina. Mas de cinco en un menu
+    // flotante deja de ser una sugerencia y es otra lista que leer
+    const POPOVER_RESULTS = 5
+    const filename = computed(() => props.fullName.replace('/', '@'))
+    const allSimilarPath = computed(() => `/a-similar/${filename.value}`)
+    const hasSimilar = computed(() => total.value > 0)
 
     const loadRelated = async () => {
       if (requested.value) return
       requested.value = true
       loading.value = true
       try {
-        const filename = props.fullName.replace('/', '@')
-        const response = await axios.get(`/related/${filename}.json`)
-        related.value = response.data.related || []
+        const response = await axios.get(`/similar/${filename.value}.json`)
+        const all = response.data.repos_data || []
+        total.value = all.length
+        similar.value = all.slice(0, POPOVER_RESULTS)
       } catch (error) {
         notFound.value = true
       } finally {
@@ -95,11 +117,19 @@ export default defineComponent({
       }
     }
 
+    // Por que se parecen. Se calcula aqui porque las dos listas de topics ya estan
+    // en el navegador, asi que guardarlo seria duplicar un dato derivado
+    const sharedTopics = (repo: any) => {
+      const own = new Set(props.topics as string[])
+      return (repo.topics || []).filter((topic: string) => own.has(topic)).slice(0, 3)
+    }
+
     const formatStars = (stars: number) => {
       return stars >= 1000 ? (stars / 1000).toFixed(1) + 'k' : String(stars)
     }
 
-    return { related, loading, isOpen, isEmpty, loadRelated, formatStars }
+    return { similar, total, loading, isOpen, isEmpty, hasSimilar, allSimilarPath,
+             loadRelated, formatStars, sharedTopics }
   }
 })
 </script>
@@ -187,5 +217,20 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.related-more {
+  display: block;
+  padding: 8px 14px 4px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.related-more:hover {
+  background-color: rgba(102, 126, 234, 0.08);
 }
 </style>

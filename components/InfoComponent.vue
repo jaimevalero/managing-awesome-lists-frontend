@@ -5,12 +5,19 @@
         Topic Category: <LabelTopic :topic="categoryName" color="Primary" />
       </h1>     
    <h1 v-else-if="categoryType === 'awesome'">Awesome List: <a :href="'https://github.com/' + categoryName" target="_blank">{{ categoryName }}</a></h1>
+      <h1 v-else-if="categoryType === 'similar'">
+        Similar to: <a :href="'https://github.com/' + categoryName" target="_blank">{{ categoryName }}</a>
+      </h1>
     </v-card-title>
     <v-card-item v-if="description">
       {{ description }}
     </v-card-item> 
     <v-card-item v-if="categoryType === 'topic'">
       Page auto-generated with the repos containing the topic: {{ categoryName }}.
+    </v-card-item>
+    <v-card-item v-else-if="categoryType === 'similar'">
+      Repositories that do something like {{ categoryName }}. Every card here offers its
+      own similar repositories, so you can keep hopping.
     </v-card-item>    
     <v-card-text>
       

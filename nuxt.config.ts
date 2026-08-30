@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     // Nitro vigila public/ en dev. Ahi viven ~50.000 json generados por el backend, que
     // agotan el limite de inotify del sistema (ENOSPC) y no se editan a mano nunca
     watchOptions: {
-      ignored: ['**/dist/**', '**/public/topic/**', '**/public/related/**', '**/public/awesome/**']
+      ignored: ['**/dist/**', '**/public/topic/**', '**/public/similar/**', '**/public/awesome/**']
     }
   },
   devtools: { enabled: true },
@@ -47,10 +47,10 @@ export default defineNuxtConfig({
     },
     server: {
       watch: {
-        // public/topic y public/related son ~50.000 ficheros de datos generados por el
+        // public/topic y public/similar son ~47.000 ficheros de datos generados por el
         // backend. Vigilarlos en dev agota el limite de inotify del sistema (ENOSPC) y
         // no sirve de nada: no se editan a mano, se regeneran con la pasada del backend
-        ignored: ['**/dist/**', '**/public/topic/**', '**/public/related/**', '**/public/awesome/**'],
+        ignored: ['**/dist/**', '**/public/topic/**', '**/public/similar/**', '**/public/awesome/**'],
       },
     },
   },
