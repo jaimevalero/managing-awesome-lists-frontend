@@ -11,8 +11,11 @@
       <TableComponent :reposData="jsonData.repos_data" />
     </div>
     <div v-else-if="!pending">
-      <v-alert type="warning" variant="tonal" class="ma-4">
+      <v-alert v-if="notFound" type="warning" variant="tonal" class="ma-4">
         No se ha encontrado esta lista.
+      </v-alert>
+      <v-alert v-else type="error" variant="tonal" class="ma-4">
+        No se han podido cargar los datos de esta lista. Vuelve a intentarlo en un momento.
       </v-alert>
     </div>
   </div>
@@ -20,7 +23,7 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 
 import InfoComponent from '../../components/InfoComponent.vue'
@@ -40,14 +43,19 @@ export default defineComponent({
     const route = useRoute()
     const getDescription = (data: any) => data?.repo_meta_data?.description
 
-    // useAsyncData corre tambien en el servidor: es lo que hace que el HTML
+    // usePublicJson corre tambien en el servidor: es lo que hace que el HTML
     // que ve un crawler (o al compartir el enlace) ya traiga la lista, en vez
     // de la version vacia que dejaba el fetch original hecho solo en el cliente.
-    const { data: jsonData, pending } = useAsyncData(
+    const { data: jsonData, pending, error } = usePublicJson<any>(
       `list-${route.params.type}-${route.params.name}`,
-      () => $fetch(`/${route.params.type}/${route.params.name}.json`).catch(() => null),
+      () => `/${route.params.type}/${route.params.name}.json`,
       { watch: [() => route.fullPath] }
     )
+
+    // Un 404 es "esta lista no existe"; cualquier otra cosa es "no se pudieron
+    // cargar los datos". Distinguirlos importa: el segundo caso es un fallo
+    // nuestro y hay que verlo, no disimularlo con el mismo mensaje del primero.
+    const notFound = computed(() => (error.value as any)?.statusCode === 404)
 
     // useHead con una funcion (en vez de un objeto) es reactivo: unhead vuelve a
     // leerla cuando jsonData cambia, sin depender de que un watch() llegue a
@@ -91,6 +99,7 @@ export default defineComponent({
     return {
       jsonData,
       pending,
+      notFound,
       getDescription
     }
   }

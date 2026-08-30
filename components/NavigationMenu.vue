@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, watch } from 'vue'
+import { defineComponent, ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 import { getCategoryIcon, formatCategoryName } from '~/utils/iconMapper'
@@ -131,7 +131,12 @@ export default defineComponent({
   },
   emits: ['update:model-value'],
   setup(props, { emit }) {
-    const items = ref([])
+    // En SSR: el menu lateral es el grafo de enlaces internos del sitio, y
+    // cargandolo en onMounted no llegaba al HTML servido — un crawler veia
+    // "No lists found" y ni un solo enlace a las 83 listas. Comparte la clave
+    // 'lists' con la portada, asi que Nuxt reutiliza el mismo payload.
+    const { data: listsData } = usePublicJson<any[]>('lists', () => '/lists.json')
+    const items = computed(() => listsData.value || [])
     const router = useRouter()
     const route = useRoute()
     const searchQuery = ref('')
@@ -201,15 +206,6 @@ export default defineComponent({
 
     watch(isSearching, (searching) => {
       if (searching) loadTopics()
-    })
-
-    onMounted(async () => {
-      try {
-        const response = await axios.get('/lists.json')
-        items.value = response.data
-      } catch (error) {
-        console.error('Error loading lists:', error)
-      }
     })
 
     const navigateTo = async (item: any) => {

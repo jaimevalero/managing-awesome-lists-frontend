@@ -80,8 +80,14 @@
         <!-- Display lists based on state -->
         <v-row v-else-if="displayedLists.length === 0">
           <v-col cols="12">
-            <v-alert type="info" variant="tonal">
+            <v-alert v-if="listsError" type="error" variant="tonal">
+              Could not load the lists. Please try again in a moment.
+            </v-alert>
+            <v-alert v-else-if="searchAllLists" type="info" variant="tonal">
               No lists found matching "{{ searchAllLists }}"
+            </v-alert>
+            <v-alert v-else type="info" variant="tonal">
+              No lists available.
             </v-alert>
           </v-col>
         </v-row>
@@ -233,9 +239,10 @@ export default defineComponent({
     const showAllLists = ref(false)
     const searchAllLists = ref('')
 
-    // useAsyncData corre en el servidor: el HTML inicial ya trae las listas,
+    // usePublicJson corre en el servidor: el HTML inicial ya trae las listas,
     // en vez del "0 lists available" que dejaba el fetch en onMounted.
-    const { data: allListsData, pending: loading } = useAsyncData('lists', () => $fetch('/lists.json'))
+    const { data: allListsData, pending: loading, error: listsError } =
+      usePublicJson<any[]>('lists', () => '/lists.json')
 
     const allLists = computed(() => allListsData.value || [])
     const featuredLists = computed(() => allLists.value.slice(0, 8))
@@ -351,6 +358,7 @@ export default defineComponent({
       featuredLists,
       allLists,
       loading,
+      listsError,
       showAllLists,
       searchAllLists,
       displayedLists,
