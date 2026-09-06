@@ -110,7 +110,7 @@
             >
               <v-card-text>
                 <div class="category-icon">
-                  <v-icon size="40" color="primary">{{ getCategoryIcon(item.category_name) }}</v-icon>
+                  <v-icon size="40" color="primary">{{ item.icon || getCategoryIcon(item.display || item.category_name) }}</v-icon>
                 </div>
                 <h3 class="category-title">{{ item.display }}</h3>
                 
@@ -247,7 +247,7 @@ export default defineComponent({
     // usePublicJson corre en el servidor: el HTML inicial ya trae las listas,
     // en vez del "0 lists available" que dejaba el fetch en onMounted.
     const { data: allListsData, pending: loading, error: listsError } =
-      usePublicJson<any[]>('lists', () => '/lists.json')
+      usePublicJson<any[]>('lists', () => '/lists_enriched.json')
 
     const allLists = computed(() => allListsData.value || [])
     const featuredLists = computed(() => allLists.value.slice(0, 8))

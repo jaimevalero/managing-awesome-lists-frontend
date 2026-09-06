@@ -1,6 +1,14 @@
 /**
- * Icon mapper utility following Single Responsibility Principle
- * Maps category names to Material Design Icons
+ * Respaldo para pintar el icono de una categoria.
+ *
+ * El icono de cada awesome list ya no se decide aqui: viene en lists.json, la
+ * fuente de verdad del backend, y llega al frontend dentro de
+ * lists_enriched.json. Antes vivia en este fichero, y eso obligaba a tocar dos
+ * repos para añadir una lista; olvidarse del segundo no daba error, la lista
+ * simplemente salia con un icono generico, y asi se llego a 42 de 78 sin icono.
+ *
+ * Esto se sigue usando para lo que no tiene icono propio en el dato: los
+ * topics, y las listas que quedaron en var/awesome sin estar ya en la fuente.
  */
 
 // Icon mapping configuration - following Strategy Pattern
@@ -178,11 +186,11 @@ export function getCategoryIcon(categoryName: string): string {
     return CATEGORY_ICON_MAP[lowerName]
   }
 
-  // Aqui llega el nombre completo del repo ("jghoman/awesome-apache-airflow"),
-  // asi que hay que quedarse con el tema: sin el dueño y sin el "awesome-".
-  // Sin esto gana la primera palabra suelta que este en el mapa, y airflow
-  // salia con el icono de Kafka porque "apache" va antes, y claude-code con el
-  // de claude a secas.
+  // Quien pinta iconos pasa el campo display, que ya viene limpio ("scala",
+  // "claude-code"). Esto es solo por si llega el nombre completo del repo
+  // ("jghoman/awesome-apache-airflow"): sin quitarle el dueño y el "awesome-"
+  // ganaria la primera palabra suelta que este en el mapa, y airflow saldria
+  // con el icono de Kafka porque "apache" va antes.
   const tema = (lowerName.split('/').pop() || '').replace(/^awesome[-_]?/, '')
   if (CATEGORY_ICON_MAP[tema]) {
     return CATEGORY_ICON_MAP[tema]

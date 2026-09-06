@@ -67,7 +67,7 @@
               >
                 <template v-slot:prepend>
                   <v-icon size="small" :color="isActive(item) ? 'primary' : 'grey'">
-                    {{ getCategoryIcon(item.category_name) }}
+                    {{ item.icon || getCategoryIcon(item.display || item.category_name) }}
                   </v-icon>
                 </template>
 
@@ -309,11 +309,18 @@ export default defineComponent({
     })
 
     onMounted(async () => {
-      try {
-        const response = await axios.get('/lists.json')
-        items.value = response.data
-      } catch (error) {
-        console.error('Error loading lists:', error)
+      // lists_enriched.json trae ya el icono de cada lista, puesto en la fuente
+      // de verdad del backend. Se prueba antes el fichero antiguo por si el
+      // despliegue va por delante de la primera pasada del cron que lo genera;
+      // ese respaldo se puede quitar cuando haya corrido una vez.
+      for (const url of ['/lists_enriched.json', '/lists.json']) {
+        try {
+          const response = await axios.get(url)
+          items.value = response.data
+          return
+        } catch (error) {
+          if (url === '/lists.json') console.error('Error loading lists:', error)
+        }
       }
     })
 
