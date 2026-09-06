@@ -256,21 +256,25 @@ export default defineComponent({
     const features = [
       {
         title: 'Curated Content',
-        description: 'Access hand-picked awesome lists from the GitHub community',
+        description: 'Hand-picked awesome lists, maintained by the GitHub community',
         icon: 'mdi-star-check',
         color: 'primary'
       },
       {
-        title: 'Advanced Search',
-        description: 'Find repositories by name, topics, description, or language',
+        title: 'Search Everything',
+        // Hasta hace poco solo se podia buscar dentro de una pagina; ahora la
+        // barra lateral busca en los 23.000 repos, y merece decirlo.
+        description: 'Find any of 23,000 repositories by name, topic, description or language',
         icon: 'mdi-magnify',
         color: 'success'
       },
       {
-        title: 'Smart Sorting',
-        description: 'Sort by stars, update date, creation date, or alphabetically',
-        icon: 'mdi-sort',
-        color: 'info'
+        title: 'Similar Repositories',
+        // Lo que mejor distingue a esta web de mirar github a pelo: cada repo
+        // enlaza con una docena de parientes, y desde cada uno se sigue saltando.
+        description: 'Every repo links to a dozen alternatives, matched by what they do rather than by shared tags',
+        icon: 'mdi-graph-outline',
+        color: 'warning'
       }
     ]
 
