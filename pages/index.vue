@@ -221,16 +221,16 @@ export default defineComponent({
   },
   setup() {
     useHead({
-      title: 'Awesome List Viewer — explora listas awesome de GitHub',
+      title: 'Awesome List Viewer — explore GitHub awesome lists',
       meta: [
         {
           name: 'description',
-          content: 'Explora y busca en cientos de listas awesome de GitHub: más de 12.000 repositorios curados, filtrables por tema y ordenables por popularidad.'
+          content: 'Search and explore hundreds of curated GitHub awesome lists: over 23,000 repositories, filterable by topic and sortable by popularity.'
         },
         { property: 'og:title', content: 'Awesome List Viewer' },
         {
           property: 'og:description',
-          content: 'Explora y busca en cientos de listas awesome de GitHub: más de 12.000 repositorios curados, filtrables por tema y ordenables por popularidad.'
+          content: 'Search and explore hundreds of curated GitHub awesome lists: over 23,000 repositories, filterable by topic and sortable by popularity.'
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://managing-awesome-lists.vercel.app/' }
@@ -291,14 +291,17 @@ export default defineComponent({
         },
         { 
           title: 'Unique Repositories', 
-          value: '12K',
+          // A mano, asi que hay que repasarlo de vez en cuando: en septiembre
+          // de 2026 son 23.282 repos y 25.087 topics, no los 12K/20K que
+          // ponia desde que se escribio esto.
+          value: '23K',
           description: 'Unique repos across all lists',
           icon: 'mdi-source-repository', 
           color: 'success' 
         },
         { 
           title: 'Topic Pages', 
-          value: '20K',
+          value: '25K',
           description: 'Auto-generated topic pages',
           icon: 'mdi-tag-multiple', 
           color: 'info' 

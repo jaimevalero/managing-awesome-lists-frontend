@@ -13,7 +13,7 @@
       <div class="pa-3 pt-4">
         <v-text-field
           v-model="searchQuery"
-          placeholder="Search lists and topics..."
+          placeholder="Search lists, topics and repos..."
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
@@ -35,6 +35,15 @@
           class="ml-1"
         >
           {{ filteredTopics.length }}{{ topicsTruncated ? '+' : '' }} topics
+        </v-chip>
+        <v-chip
+          v-if="isSearching && filteredRepos.length"
+          size="small"
+          color="success"
+          variant="tonal"
+          class="ml-1"
+        >
+          {{ filteredRepos.length }}{{ reposTruncated ? '+' : '' }} repos
         </v-chip>
       </div>
 
@@ -93,10 +102,39 @@
           </div>
         </template>
 
+        <!-- Repos: un repo puede no ser topic de nada y aun asi tener pagina.
+             Buscar "adminer" no daba nada aunque el repo esta en tres listas -->
+        <template v-if="isSearching && filteredRepos.length">
+          <v-divider class="mt-2"></v-divider>
+          <div class="px-4 pt-3 pb-1 topics-section-title">Repositories</div>
+          <v-list nav class="py-0">
+            <v-list-item
+              v-for="repo in filteredRepos"
+              :key="repo.n"
+              class="list-item-custom"
+              @click="navigateToRepo(repo)"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small" color="grey">mdi-source-repository</v-icon>
+              </template>
+              <v-list-item-title class="repo-title">{{ repo.n }}</v-list-item-title>
+              <v-list-item-subtitle v-if="repo.d" class="repo-subtitle">
+                {{ repo.d }}
+              </v-list-item-subtitle>
+              <template v-slot:append>
+                <span class="topic-count">{{ formatStars(repo.s) }}</span>
+              </template>
+            </v-list-item>
+          </v-list>
+        </template>
+
         <!-- Empty state -->
-        <div v-if="filteredItems.length === 0 && filteredTopics.length === 0" class="pa-4 text-center">
+        <div
+          v-if="filteredItems.length === 0 && filteredTopics.length === 0 && filteredRepos.length === 0"
+          class="pa-4 text-center"
+        >
           <v-icon size="48" color="grey-lighten-2">mdi-file-search-outline</v-icon>
-          <p class="text-caption text-grey mt-2">No lists found</p>
+          <p class="text-caption text-grey mt-2">Nothing found</p>
         </div>
       </div>
 
@@ -145,14 +183,27 @@ export default defineComponent({
     // que solo hacen falta si el usuario llega a escribir en el buscador.
     const topics = ref([])
     const topicsRequested = ref(false)
+    // Indice de repos (public/repos.json). Pesa ~1 MB comprimido, bastante mas
+    // que el de topics, asi que tambien se carga solo cuando se escribe algo.
+    const repos = ref([])
+    const reposRequested = ref(false)
 
     // v-text-field con clearable pone null al limpiar, no ''
     const normalizedQuery = computed(() => (searchQuery.value || '').trim().toLowerCase())
+    // Las palabras por separado, para poder exigirlas todas sin exigir que
+    // aparezcan juntas y en ese orden. Buscar "kubernetes dashboard" no
+    // encontraba nada, porque ningun nombre ni descripcion contiene esa cadena
+    // literal aunque haya repos que son las dos cosas.
+    const queryWords = computed(() =>
+      normalizedQuery.value.split(/\s+/).filter(Boolean)
+    )
     const isSearching = computed(() => normalizedQuery.value.length > 0)
 
     // Cuantos topics como mucho: la barra es para navegar, no para volcar
     // miles de etiquetas.
     const MAX_TOPICS = 30
+    // Menos que topics: cada repo ocupa dos lineas, con nombre y descripcion.
+    const MAX_REPOS = 12
 
     // Filter items based on search query
     const filteredItems = computed(() => {
@@ -160,12 +211,11 @@ export default defineComponent({
         return items.value
       }
 
-      const query = normalizedQuery.value
+      const palabras = queryWords.value
       return items.value.filter((item: any) => {
-        const matchesDisplay = item.display?.toLowerCase().includes(query)
-        const matchesName = item.category_name?.toLowerCase().includes(query)
-        const matchesDescription = item.description?.toLowerCase().includes(query)
-        return matchesDisplay || matchesName || matchesDescription
+        const texto = [item.display, item.category_name, item.description]
+          .filter(Boolean).join(' ').toLowerCase()
+        return palabras.every((palabra: string) => texto.includes(palabra))
       })
     })
 
@@ -194,6 +244,41 @@ export default defineComponent({
     const filteredTopics = computed(() => matchingTopics.value.slice(0, MAX_TOPICS))
     const topicsTruncated = computed(() => matchingTopics.value.length > MAX_TOPICS)
 
+    // Se busca por el nombre corto ademas de por el completo: quien escribe
+    // "adminer" no sabe que el repo es "vrana/adminer", y ese era justo el caso
+    // que no encontraba nada.
+    const rankRepo = (repo: any, query: string) => {
+      const completo = repo.n.toLowerCase()
+      const corto = completo.split('/').pop() || ''
+      if (corto === query) return 0
+      if (corto.startsWith(query)) return 1
+      if (completo.includes(query)) return 2
+      return 3   // solo aparece en la descripcion
+    }
+
+    const matchingRepos = computed(() => {
+      if (!isSearching.value) {
+        return []
+      }
+      const query = normalizedQuery.value
+      const palabras = queryWords.value
+      return repos.value
+        .filter((repo: any) => {
+          const texto = `${repo.n} ${repo.d || ''}`.toLowerCase()
+          return palabras.every((palabra: string) => texto.includes(palabra))
+        })
+        // repos.json ya viene ordenado por estrellas; aqui solo se adelanta lo
+        // que casa por nombre, para que "react" saque facebook/react y no un
+        // repo cualquiera que lo mencione de pasada.
+        .sort((a: any, b: any) => rankRepo(a, query) - rankRepo(b, query))
+    })
+
+    const filteredRepos = computed(() => matchingRepos.value.slice(0, MAX_REPOS))
+    const reposTruncated = computed(() => matchingRepos.value.length > MAX_REPOS)
+
+    const formatStars = (estrellas: number) =>
+      estrellas >= 1000 ? `${(estrellas / 1000).toFixed(1)}K` : String(estrellas || 0)
+
     const loadTopics = async () => {
       if (topicsRequested.value) return
       topicsRequested.value = true
@@ -205,8 +290,22 @@ export default defineComponent({
       }
     }
 
+    const loadRepos = async () => {
+      if (reposRequested.value) return
+      reposRequested.value = true
+      try {
+        const response = await axios.get('/repos.json')
+        repos.value = response.data
+      } catch (error) {
+        console.error('Error loading repos:', error)
+      }
+    }
+
     watch(isSearching, (searching) => {
-      if (searching) loadTopics()
+      if (searching) {
+        loadTopics()
+        loadRepos()
+      }
     })
 
     onMounted(async () => {
@@ -232,6 +331,13 @@ export default defineComponent({
       await router.push('/a-topic/' + encodeURIComponent(topic.name))
     }
 
+    // Un repo se navega a su pagina de parecidos, que es la que existe. Los
+    // 168 sin vecinos claros no tienen fichero, y esa pagina ya sabe decir
+    // "no similar repositories found" en vez de dar un error.
+    const navigateToRepo = async (repo: any) => {
+      await router.push('/a-similar/' + repo.n.replace('/', '@'))
+    }
+
     const isActive = (item: any) => {
       const currentPath = route.params.name?.toString().replace('@', '/') || ''
       return currentPath === item.category_name
@@ -247,6 +353,10 @@ export default defineComponent({
     })
 
     return {
+      filteredRepos,
+      reposTruncated,
+      navigateToRepo,
+      formatStars,
       items,
       searchQuery,
       isSearching,
@@ -367,6 +477,16 @@ export default defineComponent({
 
 .topic-chip--active {
   background: rgba(102, 126, 234, 0.15);
+}
+
+.repo-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.repo-subtitle {
+  font-size: 0.7rem;
+  opacity: 0.7;
 }
 
 .topic-count {
