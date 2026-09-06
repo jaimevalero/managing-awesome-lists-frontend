@@ -51,6 +51,47 @@ const MIN_TOPIC_REPOS = 5
 // con MIN_TOPIC_REPOS. Se navegan, no se buscan: fuera del indice y fuera del sitemap
 // (generate-sitemap.mjs solo recorre awesome y topic, asi que ya no entran)
 const NOINDEX_TYPES = ['similar']
+// Cuantos repos se describen en los datos estructurados. La pagina de python
+// lista 1.254: serializarlos todos duplicaria el peso del HTML para decirle a
+// Google algo que ya deduce del contenido visible. Con una muestra basta para
+// que entienda que esto es una lista de proyectos y no un articulo.
+const JSONLD_MAX_ITEMS = 25
+
+// Describe la pagina como lo que es: una coleccion de proyectos de software.
+// El titulo y la meta description le dicen a Google de que va; esto le dice
+// que hay dentro, con nombre, lenguaje, enlace y estrellas de cada repo, que
+// son datos que ya tenemos cargados y que hasta ahora no le daban a nadie.
+function buildJsonLd(data: any, title: string, description: string, url: string) {
+  const repos = (data.repos_data || []).slice(0, JSONLD_MAX_ITEMS)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description,
+    url,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: data.repos_data?.length || 0,
+      itemListElement: repos.map((repo: any, index: number) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'SoftwareSourceCode',
+          name: repo.full_name,
+          description: repo.description || undefined,
+          codeRepository: `https://github.com/${repo.full_name}`,
+          programmingLanguage: repo.language || undefined,
+          keywords: (repo.topics || []).join(', ') || undefined,
+          interactionStatistic: {
+            '@type': 'InteractionCounter',
+            interactionType: 'https://schema.org/LikeAction',
+            userInteractionCount: repo.stargazers_count || 0
+          }
+        }
+      }))
+    }
+  }
+}
 
 export default defineComponent({
   components: {
@@ -116,7 +157,21 @@ export default defineComponent({
         ],
         link: [
           { rel: 'canonical', href: SITE_URL + path }
-        ]
+        ],
+        // En una pagina noindex no pinta nada: no la va a indexar igualmente.
+        // Se escapa "<" porque una descripcion que contenga una etiqueta de
+        // cierre de script cortaria el bloque y se llevaria por delante el
+        // resto del head.
+        script: isNoIndex
+          ? []
+          : [
+              {
+                type: 'application/ld+json',
+                innerHTML: JSON.stringify(
+                  buildJsonLd(data, title, description, SITE_URL + path)
+                ).replace(/</g, '\\u003c')
+              }
+            ]
       }
     })
 
