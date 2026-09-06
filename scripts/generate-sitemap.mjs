@@ -15,12 +15,15 @@ const SITE_URL = 'https://managing-awesome-lists.vercel.app'
 // autoridad del dominio en vez de sumarla. Solo entran las que aportan algo.
 const MIN_TOPIC_REPOS = 5
 
-// Los parecidos NO entran, a proposito. Las paginas de /a-similar sirven
-// <meta name="robots" content="noindex"> (NOINDEX_TYPES en pages/a-[type]),
-// porque se navegan de vecino en vecino, no se buscan. Anunciarlas en el
-// sitemap y luego decirle a Google que no las indexe es contradecirse, y lo
-// reporta como "enviada mediante sitemap pero marcada como noindex".
-// Si algun dia se quieren indexar, hay que quitar antes ese noindex.
+// Los parecidos entran solo si reunen vecinos suficientes. La mitad se queda
+// en 0-4 (la similitud por topics compartidos se agota pronto: mediana 5,
+// techo 12) y esas si son contenido fino. El resto son paginas legitimas.
+//
+// Este umbral es el mismo que decide el noindex en pages/a-[type]/[[name]].vue
+// (MIN_SIMILAR_REPOS) y tienen que moverse juntos: anunciar aqui una pagina
+// que luego se declara noindex es contradecirse, y Google lo reporta como
+// "enviada mediante sitemap pero marcada como noindex".
+const MIN_SIMILAR_REPOS = 5
 
 function toUrl(type, name) {
   return `${SITE_URL}/a-${type}/${encodeURIComponent(name).replace(/%40/g, '@')}`
@@ -54,7 +57,8 @@ function listUrls(type, minRepos) {
 const staticUrls = [{ url: SITE_URL + '/' }, { url: SITE_URL + '/about' }]
 const awesomeUrls = listUrls('awesome', 0)
 const topicUrls = listUrls('topic', MIN_TOPIC_REPOS)
-const urls = [...staticUrls, ...awesomeUrls, ...topicUrls]
+const similarUrls = listUrls('similar', MIN_SIMILAR_REPOS)
+const urls = [...staticUrls, ...awesomeUrls, ...topicUrls, ...similarUrls]
 
 const body = urls
   .map(({ url, lastmod }) => {
@@ -70,5 +74,5 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.s
 writeFileSync(join(PUBLIC_DIR, 'sitemap.xml'), xml)
 console.log(
   `sitemap.xml generado con ${urls.length} URLs ` +
-    `(${awesomeUrls.length} awesome, ${topicUrls.length} topic)`
+    `(${awesomeUrls.length} awesome, ${topicUrls.length} topic, ${similarUrls.length} similar)`
 )

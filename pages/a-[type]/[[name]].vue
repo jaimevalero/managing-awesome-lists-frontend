@@ -1,8 +1,9 @@
 <template>
   <div>
     <div v-if="jsonData">
-      <!-- Client-only: el rastro vive en sessionStorage, y estas paginas son noindex
-           de todas formas, asi que no hay nada que renderizar en servidor -->
+      <!-- Client-only: el rastro vive en sessionStorage, que en servidor no existe.
+           Es navegacion personal, no contenido de la pagina, asi que no pinta nada
+           en el HTML que ve un crawler -->
       <ClientOnly>
         <SimilarTrail v-if="jsonData.category_type === 'similar'" :full-name="jsonData.category_name" />
       </ClientOnly>
@@ -25,10 +26,10 @@
         <a :href="'https://github.com/' + originRepo" target="_blank">{{ originRepo }}</a>.
       </v-alert>
       <v-alert v-else-if="notFound" type="warning" variant="tonal" class="ma-4">
-        No se ha encontrado esta lista.
+        This list was not found.
       </v-alert>
       <v-alert v-else type="error" variant="tonal" class="ma-4">
-        No se han podido cargar los datos de esta lista. Vuelve a intentarlo en un momento.
+        Could not load this list. Please try again in a moment.
       </v-alert>
     </div>
   </div>
@@ -47,10 +48,12 @@ const SITE_URL = 'https://managing-awesome-lists.vercel.app'
 // Igual que en scripts/generate-sitemap.mjs: por debajo de esto una pagina de
 // topic es solo 1-2 repos sueltos, no aporta nada que indexar.
 const MIN_TOPIC_REPOS = 5
-// 21.000 paginas de cinco repos son contenido fino a escala, justo lo que se evita
-// con MIN_TOPIC_REPOS. Se navegan, no se buscan: fuera del indice y fuera del sitemap
-// (generate-sitemap.mjs solo recorre awesome y topic, asi que ya no entran)
-const NOINDEX_TYPES = ['similar']
+// Los parecidos se filtran por densidad, no por tipo. Antes quedaban todos fuera
+// del indice porque la mitad son contenido fino, pero las que reunen unos cuantos
+// vecinos son paginas legitimas y con titulo propio. El umbral es el mismo que
+// aplica generate-sitemap.mjs, y tiene que seguir siendolo: anunciar en el sitemap
+// una pagina que luego se declara noindex es contradecirse, y Google lo reporta.
+const MIN_SIMILAR_REPOS = 5
 // Cuantos repos se describen en los datos estructurados. La pagina de python
 // lista 1.254: serializarlos todos duplicaria el peso del HTML para decirle a
 // Google algo que ya deduce del contenido visible. Con una muestra basta para
@@ -127,19 +130,20 @@ export default defineComponent({
       const path = `/a-${route.params.type}/${route.params.name}`
 
       if (!data) {
-        return { title: 'Lista no encontrada', meta: [{ name: 'robots', content: 'noindex' }] }
+        return { title: 'List not found', meta: [{ name: 'robots', content: 'noindex' }] }
       }
 
       const repoCount = data.repos_data?.length || 0
       const description = getDescription(data)
-        ? `${getDescription(data)} · ${repoCount} recursos curados.`
-        : `Lista curada de ${repoCount} recursos sobre ${data.category_name}.`
+        ? `${getDescription(data)} · ${repoCount} curated resources.`
+        : `A curated list of ${repoCount} resources about ${data.category_name}.`
       const title = data.category_type === 'similar'
         ? `Similar to ${data.category_name} — ${repoCount} repositories`
-        : `${data.category_name} — ${repoCount} recursos`
+        : `${data.category_name} — ${repoCount} resources`
       const topics = Object.keys(data.frecuent_topics || {}).join(', ')
       const isThinTopic = data.category_type === 'topic' && repoCount < MIN_TOPIC_REPOS
-      const isNoIndex = isThinTopic || NOINDEX_TYPES.includes(String(route.params.type))
+      const isThinSimilar = data.category_type === 'similar' && repoCount < MIN_SIMILAR_REPOS
+      const isNoIndex = isThinTopic || isThinSimilar
 
       return {
         title,
