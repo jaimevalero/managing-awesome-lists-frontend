@@ -22,3 +22,8 @@ logs
 .env
 .env.*
 !.env.example
+
+# Indice vectorial: solo hace falta cuando exista la busqueda por texto.
+# Para los repos parecidos se usa en torre y no se despliega.
+public/embeddings.bin
+public/embeddings-meta.json
