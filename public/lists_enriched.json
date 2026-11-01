@@ -67,7 +67,7 @@
     },
     {
         "category_name": "hesreallyhim/awesome-claude-code",
-        "description": "A hand-picked collection of the finest of resources for the most awesome of agents, Claude Code, the undisputed champion of coding companions, from the unstoppable team at Anthropic PBC. A delectable showcase of top tier skills, ambidextrous agents, scintillating status lines, top notch developer tooling, and also we have plugins",
+        "description": "A hand-picked collection of the finest of resources for the most awesome of agents, Claude Code, the undisputed champion of coding companions, from the unstoppable team at Anthropic PBC (no affiliation). A delectable showcase of top tier skills, ambidextrous agents, scintillating status lines, top notch developer tooling, and also we have plugins",
         "display": "claude-code",
         "icon": "mdi-code-braces-box"
     },
@@ -127,7 +127,7 @@
     },
     {
         "category_name": "javierluraschi/awesome-dataviz",
-        "description": ":chart_with_upwards_trend:  A curated list of awesome data visualization libraries and resources.",
+        "description": "A curated list of awesome data visualization libraries and resources.",
         "display": "dataviz",
         "icon": "mdi-chart-box-outline"
     },
