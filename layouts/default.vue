@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, watch } from 'vue'
 import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import NavigationMenu from '../components/NavigationMenu.vue'
@@ -31,6 +31,13 @@ export default defineComponent({
       if (storedDrawerState !== null) {
         drawer.value = storedDrawerState === 'true'
       }
+    })
+
+    // La busqueda de la portada pinta sus resultados en la barra lateral, que
+    // puede estar plegada
+    const siteSearch = useState<string>('site-search', () => '')
+    watch(siteSearch, (query) => {
+      if (query) drawer.value = true
     })
 
     const toggleDrawer = () => {

@@ -17,17 +17,27 @@
     </v-toolbar-title>
 
     <v-spacer></v-spacer>
+
+    <GitHubStarButton
+      text="Star on GitHub"
+      color="white"
+      variant="outlined"
+      size="small"
+      class="mr-3"
+    />
   </v-app-bar>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DropdownMenu from '../components/DropdownMenu.vue'
+import GitHubStarButton from '../components/GitHubStarButton.vue'
 
 export default defineComponent({
   emits: ['toggle-drawer'],
   components: {
-    DropdownMenu
+    DropdownMenu,
+    GitHubStarButton
   }
 })
 </script>

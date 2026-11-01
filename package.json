@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-sitemap.mjs && node scripts/generate-repos-index.mjs && nuxt build",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/generate-repos-index.mjs && node scripts/generate-featured.mjs && nuxt build",
     "dev": "nuxt dev",
-    "generate": "node scripts/generate-sitemap.mjs && node scripts/generate-repos-index.mjs && nuxt generate",
+    "generate": "node scripts/generate-sitemap.mjs && node scripts/generate-repos-index.mjs && node scripts/generate-featured.mjs && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "sitemap": "node scripts/generate-sitemap.mjs",

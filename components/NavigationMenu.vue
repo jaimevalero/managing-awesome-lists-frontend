@@ -178,7 +178,8 @@ export default defineComponent({
     const items = ref([])
     const router = useRouter()
     const route = useRoute()
-    const searchQuery = ref('')
+    // Compartida con el buscador de la portada, que pinta sus resultados aqui
+    const searchQuery = useState<string>('site-search', () => '')
     // Indice de topics (public/topics.json). Se carga en diferido: son ~290 KB
     // que solo hacen falta si el usuario llega a escribir en el buscador.
     const topics = ref([])

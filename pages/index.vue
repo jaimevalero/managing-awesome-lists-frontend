@@ -5,22 +5,26 @@
       <v-container>
         <v-row align="center" justify="center">
           <v-col cols="12" md="8" class="text-center">
-            <h1 class="hero-title">
-              <v-icon size="48" color="primary" class="mr-2">mdi-star-circle</v-icon>
-              Awesome List Viewer
-            </h1>
+            <h1 class="hero-title">Find alternatives to any GitHub repo</h1>
             <p class="hero-subtitle">
-              Discover and explore curated lists of awesome resources, tools, and projects
+              Search 23,000 repositories from the best awesome lists, and hop between
+              projects that do the same thing.
             </p>
-            <p class="hero-description">
-              Browse through hundreds of carefully curated GitHub awesome lists and find the best 
-              resources for your next project. Filter by topics, search by keywords, and explore 
-              the most starred repositories.
-            </p>
+            <v-text-field
+              v-model="siteSearch"
+              class="hero-search"
+              bg-color="white"
+              placeholder="Try a repo or topic: kubernetes, react, adminer..."
+              prepend-inner-icon="mdi-magnify"
+              variant="solo"
+              hide-details
+              clearable
+            ></v-text-field>
             <v-btn
-              color="primary"
-              size="x-large"
-              class="mt-4"
+              color="white"
+              variant="outlined"
+              size="large"
+              class="mt-6"
               prepend-icon="mdi-arrow-down-circle"
               @click="scrollToLists"
             >
@@ -225,12 +229,12 @@ export default defineComponent({
       meta: [
         {
           name: 'description',
-          content: 'Search and explore hundreds of curated GitHub awesome lists: over 23,000 repositories, filterable by topic and sortable by popularity.'
+          content: 'Find alternatives to any GitHub repo: search over 23,000 repositories from the best awesome lists, filter by topic and sort by popularity.'
         },
         { property: 'og:title', content: 'Awesome List Viewer' },
         {
           property: 'og:description',
-          content: 'Search and explore hundreds of curated GitHub awesome lists: over 23,000 repositories, filterable by topic and sortable by popularity.'
+          content: 'Find alternatives to any GitHub repo: search over 23,000 repositories from the best awesome lists, filter by topic and sort by popularity.'
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://jaimevalero.github.io/managing-awesome-lists-frontend/' }
@@ -250,7 +254,16 @@ export default defineComponent({
       usePublicJson<any[]>('lists', () => '/lists_enriched.json')
 
     const allLists = computed(() => allListsData.value || [])
-    const featuredLists = computed(() => allLists.value.slice(0, 8))
+    const siteSearch = useState<string>('site-search', () => '')
+
+    const { data: featuredNames } = usePublicJson<string[]>('featured', () => '/featured.json')
+    const featuredLists = computed(() => {
+      // Sin featured.json (en dev, antes de la primera build) se cae a las primeras
+      if (!featuredNames.value?.length) return allLists.value.slice(0, 8)
+      return featuredNames.value
+        .map((name) => allLists.value.find((item: any) => item.category_name === name))
+        .filter(Boolean)
+    })
 
     // Base stats structure
     const features = [
@@ -365,6 +378,7 @@ export default defineComponent({
     }
 
     return {
+      siteSearch,
       computedStats,
       features,
       featuredLists,
@@ -391,6 +405,12 @@ export default defineComponent({
 }
 
 /* Hero Section */
+.hero-search {
+  max-width: 560px;
+  margin: 24px auto 0;
+  text-align: left;
+}
+
 .hero-section {
   padding: 80px 0 60px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
