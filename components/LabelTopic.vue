@@ -1,6 +1,6 @@
 <template>
   <v-chip
-    :href="'/a-topic/' + topic"
+    :to="'/a-topic/' + topic"
     size="small"
     variant="outlined"
     color="primary"

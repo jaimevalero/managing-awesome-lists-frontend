@@ -233,10 +233,10 @@ export default defineComponent({
           content: 'Search and explore hundreds of curated GitHub awesome lists: over 23,000 repositories, filterable by topic and sortable by popularity.'
         },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://managing-awesome-lists.vercel.app/' }
+        { property: 'og:url', content: 'https://jaimevalero.github.io/managing-awesome-lists-frontend/' }
       ],
       link: [
-        { rel: 'canonical', href: 'https://managing-awesome-lists.vercel.app/' }
+        { rel: 'canonical', href: 'https://jaimevalero.github.io/managing-awesome-lists-frontend/' }
       ]
     })
 

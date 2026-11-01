@@ -44,7 +44,7 @@ import InfoComponent from '../../components/InfoComponent.vue'
 import SimilarTrail from '../../components/SimilarTrail.vue'
 import TableComponent from '../../components/TableComponent.vue'
 
-const SITE_URL = 'https://managing-awesome-lists.vercel.app'
+const SITE_URL = 'https://jaimevalero.github.io/managing-awesome-lists-frontend'
 // Igual que en scripts/generate-sitemap.mjs: por debajo de esto una pagina de
 // topic es solo 1-2 repos sueltos, no aporta nada que indexar.
 const MIN_TOPIC_REPOS = 5

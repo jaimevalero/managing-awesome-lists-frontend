@@ -19,7 +19,7 @@ export default defineComponent({
     const router = useRouter()
 
     onMounted(async () => {
-      const response = await axios.get('/lists.json')
+      const response = await axios.get(publicUrl('/lists.json'))
       items.value = response.data.map((item) => {
         return item.category_name
       })

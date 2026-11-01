@@ -283,7 +283,7 @@ export default defineComponent({
       if (topicsRequested.value) return
       topicsRequested.value = true
       try {
-        const response = await axios.get('/topics.json')
+        const response = await axios.get(publicUrl('/topics.json'))
         topics.value = response.data
       } catch (error) {
         console.error('Error loading topics:', error)
@@ -294,7 +294,7 @@ export default defineComponent({
       if (reposRequested.value) return
       reposRequested.value = true
       try {
-        const response = await axios.get('/repos.json')
+        const response = await axios.get(publicUrl('/repos.json'))
         repos.value = response.data
       } catch (error) {
         console.error('Error loading repos:', error)
@@ -315,7 +315,7 @@ export default defineComponent({
       // ese respaldo se puede quitar cuando haya corrido una vez.
       for (const url of ['/lists_enriched.json', '/lists.json']) {
         try {
-          const response = await axios.get(url)
+          const response = await axios.get(publicUrl(url))
           items.value = response.data
           return
         } catch (error) {

@@ -13,7 +13,7 @@
     </v-app-bar-nav-icon>
     
     <v-toolbar-title class="mr-auto">
-      <a href="/" class="nav-brand">Awesome List Viewer</a>
+      <NuxtLink to="/" class="nav-brand">Awesome List Viewer</NuxtLink>
     </v-toolbar-title>
 
     <v-spacer></v-spacer>

@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PUBLIC_DIR = join(__dirname, '..', 'public')
-const SITE_URL = 'https://managing-awesome-lists.vercel.app'
+const SITE_URL = 'https://jaimevalero.github.io/managing-awesome-lists-frontend'
 
 // La mayoria de paginas de topic solo agregan 1-2 repos (mediana: 1 de 26.250).
 // Mandar esa cola larga a Google es contenido fino a escala: diluye la

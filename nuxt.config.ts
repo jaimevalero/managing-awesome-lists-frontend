@@ -1,6 +1,9 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
+  // La web se publica como estatico en GitHub Pages: todo se pinta en el navegador
+  // a partir de los JSON de public/, sin funciones que consuman en cada visita
+  ssr: false,
 	  app: {
     head: {
       htmlAttrs: { lang: 'en' },
